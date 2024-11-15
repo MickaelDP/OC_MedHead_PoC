@@ -9,5 +9,4 @@ public class PoCMedHeadApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(PoCMedHeadApplication.class, args);
 	}
-
 }
