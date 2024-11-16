@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service pour gérer les résultats de recherche d'hôpitaux pour les patients.
@@ -69,7 +70,7 @@ public class ResultService {
      * @param id L'ID du résultat à rechercher
      * @return Un objet Result si trouvé, null sinon
      */
-    public Result getResultById(Long id) {
+    public Result getResultById(UUID id) {
         return results.stream()
                 .filter(result -> result.getId().equals(id))
                 .findFirst()
@@ -82,7 +83,7 @@ public class ResultService {
      * @return Le résultat sauvegardé avec un ID unique généré
      */
     public Result saveResult(Result result) {
-        result.setId(generateUniqueId()); // Générer un ID unique pour le résultat
+        result.setId(UUID.randomUUID());                                                      // Générer un ID unique pour le résultat
         results.add(result);
         return result;
     }
@@ -92,7 +93,7 @@ public class ResultService {
      * @param id L'ID du résultat à supprimer
      * @return true si le résultat a été supprimé, false sinon
      */
-    public boolean deleteResult(Long id) {
+    public boolean deleteResult(UUID id) {
         return results.removeIf(result -> result.getId().equals(id));
     }
 

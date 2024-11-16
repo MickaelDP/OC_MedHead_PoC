@@ -1,12 +1,14 @@
 package com.medHead.poc.entities;
 
+import java.util.UUID;
+
 /**
  * Représente le résultat d'une recherche d'hôpital pour un patient spécifique,
  * incluant des informations sur la spécialité demandée, le délai pour atteindre
  * l'hôpital, et la disponibilité des ressources.
  */
 public class Result {
-    private Long id;                      // Identifiant unique du résultat
+    private UUID id;                      // Identifiant unique du résultat
     private Long patientId;               // Identifiant unique du patient concerné
     private String specialite;            // Nom de la spécialité demandée pour le patient
     private String hopitalNom;            // Nom de l'hôpital sélectionné
@@ -30,7 +32,7 @@ public class Result {
      * @param litDisponible Indique si un lit est disponible
      */
     public Result(Long patientId, String specialite, String hopitalNom, int delai, boolean specialiteDisponible, boolean litDisponible) {
-        this.id = generateUniqueId();  // Générez un ID unique ici si nécessaire
+        this.id = UUID.randomUUID();      // Génération d'un UUID
         this.patientId = patientId;
         this.specialite = specialite;
         this.hopitalNom = hopitalNom;
@@ -49,11 +51,11 @@ public class Result {
     }
 
     // Getters et Setters
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

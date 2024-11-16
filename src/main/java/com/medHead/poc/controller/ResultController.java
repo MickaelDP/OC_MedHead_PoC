@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Contrôleur REST pour gérer les résultats des recherches d'hôpitaux pour les patients.
@@ -37,7 +38,7 @@ public class ResultController {
      * @return Le résultat correspondant à l'ID, ou une réponse 404 si non trouvé.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Result> getResultById(@PathVariable Long id) {
+    public ResponseEntity<Result> getResultById(@PathVariable UUID id) {
         Result result = resultService.getResultById(id);
         if (result != null) {
             return ResponseEntity.ok(result);
@@ -62,7 +63,7 @@ public class ResultController {
      * @return Une réponse indiquant le succès ou l'échec de la suppression.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteResult(@PathVariable Long id) {
+    public ResponseEntity<String> deleteResult(@PathVariable UUID id) {
         boolean deleted = resultService.deleteResult(id);
         if (deleted) {
             return ResponseEntity.ok("Result supprimé avec succès.");                              // 200 OK pour suppression réussie
