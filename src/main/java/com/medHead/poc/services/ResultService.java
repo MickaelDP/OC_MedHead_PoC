@@ -1,74 +1,88 @@
 package com.medHead.poc.services;
 
-import com.medHead.poc.entities.Hopital;
-import com.medHead.poc.entities.Patient;
-import com.medHead.poc.entities.Result;
+import com.medHead.poc.entity.Hopital;
+import com.medHead.poc.model.Patient;
+import com.medHead.poc.model.Result;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Service pour gérer les résultats de recherche d'hôpitaux pour les patients.
- * Utilise un stockage en mémoire pour les besoins de démonstration ou de développement.
+ * Service pour gérer les résultats associés aux patients.
+ * Conteneur et validateur pour les résultats calculés dans l'application principale.
  */
 @Service
 public class ResultService {
 
-    private List<Result> results = new ArrayList<>();                                           // Stockage en mémoire des résultats
+    private final List<Result> results = new ArrayList<>(); // Stockage en mémoire des résultats (pour PoC)
 
     /**
-     * Crée un résultat pour un patient donné en sélectionnant le meilleur hôpital.
-     * Critères : disponibilité de lits, délai le plus court.
+     * Crée un objet `Result` basé sur les informations calculées dans l'application.
+     * Les données doivent être validées avant la création du résultat.
      *
-     * @param patient Le patient pour lequel le résultat est généré
-     * @param hopitaux La liste des hôpitaux disponibles
-     * @return Un objet Result représentant le résultat de la recherche
+     * @param patient   Le patient associé au résultat
+     * @param hopital   L'hôpital sélectionné pour le patient
+     * @param litReserve Indique si un lit a été réservé avec succès
+     * @return Le résultat créé et sauvegardé
+     * @throws IllegalArgumentException si les informations sont invalides
      */
-    public Result createResultForPatient(Patient patient, List<Hopital> hopitaux) {
-        // Chercher le meilleur hôpital avec des lits disponibles
-        Optional<Hopital> bestWithBeds = hopitaux.stream()
-                .filter(h -> h.getNombreLitDisponible() > 0)
-                .min((h1, h2) -> Integer.compare(h1.getDelai(), h2.getDelai()));
+    public Result createAndSaveResult(Patient patient, Hopital hopital, boolean litReserve) {
+        validateInputs(patient, hopital);
 
-        /* Priorité de sélection :
-         * 1 - Hôpital offrant le service requis ET disposant de lits disponibles (le plus proche).
-         * 2 - Hôpital offrant le service requis mais sans lits disponibles (le plus proche).
-         */
-        if (bestWithBeds.isPresent()) {
-            // Hôpital avec lits disponibles trouvé
-            Hopital hopital = bestWithBeds.get();
-            return new Result(patient.getId(), patient.getSpecialite(), hopital.getNom(), hopital.getDelai(), true, true);
-        } else {
-            // Aucun lit disponible, trouver l'hôpital avec le délai le plus court
-            Hopital bestWithoutBeds = hopitaux.stream()
-                    .min((h1, h2) -> Integer.compare(h1.getDelai(), h2.getDelai()))
-                    .orElse(null);
+        Result result = new Result(
+                patient.getId(),
+                patient.getSpecialite(),
+                hopital.getNom(),
+                hopital.getDelai(),
+                true, // La spécialité est nécessairement disponible, sinon cet hôpital ne serait pas sélectionné
+                litReserve
+        );
 
-            if (bestWithoutBeds != null) {
-                // Hôpital trouvé mais sans lits disponibles
-                return new Result(patient.getId(), patient.getSpecialite(), bestWithoutBeds.getNom(), bestWithoutBeds.getDelai(), true, false);
-            } else {
-                // Aucun hôpital trouvé (liste vide)
-                return null;
-            }
+        saveResult(result);
+        return result;
+    }
+
+    /**
+     * Valide les informations nécessaires pour la création d'un résultat.
+     * @param patient Le patient à valider
+     * @param hopital L'hôpital à valider
+     * @throws IllegalArgumentException si des informations sont manquantes ou invalides
+     */
+    private void validateInputs(Patient patient, Hopital hopital) {
+        if (patient == null || patient.getId() == null || patient.getSpecialite() == null || patient.getSpecialite().isEmpty()) {
+            throw new IllegalArgumentException("Les informations du patient sont invalides ou incomplètes.");
+        }
+
+        if (hopital == null || hopital.getNom() == null || hopital.getNom().isEmpty() || hopital.getDelai() < 0) {
+            throw new IllegalArgumentException("Les informations de l'hôpital sont invalides ou incomplètes.");
         }
     }
 
     /**
-     * Récupère la liste de tous les résultats.
-     * @return Une liste contenant tous les résultats enregistrés
+     * Sauvegarde un nouveau résultat dans le stockage en mémoire.
+     * @param result Le résultat à sauvegarder
+     * @return Le résultat sauvegardé
+     */
+    public Result saveResult(Result result) {
+        result.setId(UUID.randomUUID()); // Génère un ID unique pour chaque résultat
+        results.add(result);
+        return result;
+    }
+
+    /**
+     * Récupère tous les résultats stockés.
+     * @return Une liste de résultats
      */
     public List<Result> getAllResults() {
-        return results;
+        return new ArrayList<>(results); // Retourne une copie pour éviter les modifications externes
     }
 
     /**
      * Récupère un résultat par son ID.
-     * @param id L'ID du résultat à rechercher
-     * @return Un objet Result si trouvé, null sinon
+     * @param id L'ID du résultat recherché
+     * @return Le résultat correspondant, ou null si non trouvé
      */
     public Result getResultById(UUID id) {
         return results.stream()
@@ -78,31 +92,11 @@ public class ResultService {
     }
 
     /**
-     * Sauvegarde un nouveau résultat.
-     * @param result Le résultat à sauvegarder
-     * @return Le résultat sauvegardé avec un ID unique généré
-     */
-    public Result saveResult(Result result) {
-        result.setId(UUID.randomUUID());                                                      // Générer un ID unique pour le résultat
-        results.add(result);
-        return result;
-    }
-
-    /**
      * Supprime un résultat par son ID.
      * @param id L'ID du résultat à supprimer
      * @return true si le résultat a été supprimé, false sinon
      */
     public boolean deleteResult(UUID id) {
         return results.removeIf(result -> result.getId().equals(id));
-    }
-
-    /**
-     * Génère un ID unique pour un résultat.
-     * Méthode simplifiée pour une PoC.
-     * @return Un ID unique basé sur le timestamp
-     */
-    private Long generateUniqueId() {
-        return System.currentTimeMillis(); // Génération d'ID simplifiée pour la PoC
     }
 }

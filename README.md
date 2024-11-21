@@ -1,100 +1,88 @@
+# Application Web de PoC pour la Réservation de Lits d'Hôpital
+![Couverture du projet](assets/cover.png)
+**Proof of Concept (PoC) pour la gestion de réservations de lits hospitaliers, intégrant des fonctionnalités de localisation, calcul de proximité, et gestion des disponibilités.**
 
-# Système de réservation de lit d'hôpital en situation d'urgence
-
-  
-
-**Application web de PoC pour la réservation de lits d'hôpital avec fonctionnalités de localisation, gestion de proximité et gestion des disponibilités.**
-
-  
+---
 
 ## Table des Matières
 
 - [Aperçu du Projet](#aperçu-du-projet)
-
 - [Structure du Projet](#structure-du-projet)
-
 - [Fonctionnalités](#fonctionnalités)
-
 - [Prérequis](#prérequis)
-
 - [Installation](#installation)
-
 - [Exécution des Tests](#exécution-des-tests)
-
 - [Déploiement](#déploiement)
-
 - [Technologies Utilisées](#technologies-utilisées)
-
 - [Contribution](#contribution)
-
-- [Auteurs](#auteurs)
-
 - [License](#license)
 
-  
+---
 
 ## Aperçu du Projet
 
-  
+Ce projet est un Proof of Concept (PoC) visant à démontrer la faisabilité d'un système de réservation de lits hospitaliers avec les fonctionnalités suivantes :
 
-Ce projet est un Proof of Concept (PoC) d'un système de réservation de lits d'hôpital, permettant de :
+- **Recherche de lits disponibles** pour une spécialité donnée.
+- **Tri des hôpitaux** par proximité ou autres critères.
+- **Validation des réservations** avec gestion en temps réel.
+- **Simulation de trajets et gestion de la distance** entre patients et hôpitaux.
 
-- Rechercher des hôpitaux avec des lits disponibles pour une spécialité donnée
+L'architecture du backend est basée sur Spring Boot. Les tests unitaires et d'intégration sont réalisés avec JUnit et Mockito. **(Le frontend Angular est indiqué à titre indicatif et n'est pas encore implémenté dans cette version.)**
 
-- Détermination de l'hôpital le plus proche disponible
-
-- Valider et annuler les réservations en temps réel avec gestion d'un minuteur
-
-  
-
-L'application utilise une architecture backend Spring Boot, une interface frontend Angular et intègre des tests unitaires et fonctionnels pour assurer le son fonctionnement de manière shift left.
-
-  
+---
 
 ## Structure du Projet
 
-1110 à titre indicatif pour le moment:
+### Backend
+- **`src/main/java/com/medHead/poc`** :
+    - `controller` : Contrôleurs REST (Patient, Result).
+    - `services` : Services métier pour gérer les patients, hôpitaux, et résultats.
+    - `entity` : Entités principales utilisées dans le projet (`Patient`, `Hopital`, `Result`).
+    - `toMock` : Services simulant des fonctionnalités externes comme la réservation et le calcul de distance.
+    - `runner` : Simulations pour tester le flux global via un `CommandLineRunner`.
 
-- **src/main/java/com/project/hospital** : Contient le code backend en Java avec Spring Boot.
+### Tests
+- **`src/test/java/com/medHead/poc`** :
+    - `testUnitaires` : Tests unitaires avec JUnit 5.
+    - `testIntegration` : Tests d'intégration pour valider les flux API REST.
 
-- **src/main/angular** : Contient le frontend de l'application développé avec Angular.
+### **Frontend** *(à titre indicatif)*
+- **`src/main/angular`** : Structure du frontend Angular prévue pour les futures versions.
 
-- **src/test/java** : Contient les tests unitaires et d'intégration.
-
-- **pipeline** : Configurations du pipeline CI/CD avec Jenkins.
-
-  
+---
 
 ## Fonctionnalités
 
-1. **Recherche de Service** : Recherche des hôpitaux offrant une spécialité spécifique.
+1. **Recherche de Service** :
+    - Permet de lister les hôpitaux offrant une spécialité spécifique.
+2. **Réservation de Lit** :
+    - Sélectionne l'hôpital le plus proche avec un lit disponible et confirme la réservation.
+3. **Gestion de Proximité** :
+    - Calcule automatiquement la distance et le temps de trajet vers les hôpitaux pertinents.
+4. **Simulation de Résultat** :
+    - Génère des résultats pour suivre les interactions (patient, hôpital, lit réservé, etc.).
 
-2. **Réservation de Lit** : Sélection de l'hôpital le plus proche avec lit disponible et confirmation de réservation.
-
-3. **Gestion de proximité** : Calcul automatique de la distance entre l'utilisateur et les hôpitaux pertinents.
-
-5. **Gestion du temps de trajet** : Fournit une estimation du temps de trajet vers l'hôpital reservé.
-
-  
+---
 
 ## Prérequis
 
-Avant de cloner et d'exécuter le projet en local, assurez-vous d'avoir installé :
+Avant de cloner et exécuter le projet, assurez-vous d'avoir installé :
 
-- **Java 21** (ou compatible avec le backend Spring Boot)
+- **Java 21** (compatible avec Spring Boot).
+- **Maven** (pour la gestion des dépendances backend).
+- **Git** (pour cloner le dépôt).
 
-- **Node.js et npm** (pour le frontend Angular)
+*(Les outils pour le frontend, comme Node.js, npm, et Angular CLI, sont indiqués à titre indicatif pour les futures versions.)*
 
-- **JDK et Maven** (pour la gestion des dépendances backend)
-
-- **Jenkins** (pour le pipeline CI/CD)
-
-- **Git** (pour cloner le dépôt)
+---
 
 ## Installation
-### Cloner le Dépôt  
-	```bash
-	 git clone https://github.com/votre-utilisateur/hospital-bed-reservation-poc.git cd hospital-bed-reservation-poc
+
+### Cloner le Dépôt
+    ```bash
+    git clone https://github.com/votre-utilisateur/medHead-hospital-reservation-poc.git
+    cd medHead-hospital-reservation-poc
 
 ### Backend : Spring Boot
 
@@ -123,10 +111,18 @@ Pour cette PoC, il est possible d'utiliser des données en mémoire pour simuler
    - Exécuter les tests :
    ```bash
    mvn test
-2. **Tests de Performance (ex. avec JMeter)** :
+2. **Couverture des Tests avec Jacoco :**
+    - Lancer les tests avec génération du rapport de couverture :
+      ```bash
+      mvn clean verify
+   - Lancer les tests avec génération du rapport de couverture :
+      ```bash
+      target/site/jacoco/index.html
+   ![Couverture du projet](assets/jacoco94.png)
+3. **Tests de Performance (ex. avec JMeter)** :
    - Configurer et exécuter les scénarios de performance avec des jeux de données générés.
 
-3. **Exécution du Pipeline CI/CD** :
+4. **Exécution du Pipeline CI/CD** :
    - Utilisez Jenkins pour automatiser les tests et le déploiement continu.
 
 ## Déploiement
@@ -136,22 +132,20 @@ Voici les étapes pour déployer l'application en production (pour une applicati
 1. **Pipeline CI/CD** :
    - Configuration dans Jenkins pour le déploiement continu. Voir le fichier Jenkinsfile dans le dépôt pour les détails.
 
-2. **Hébergement** :
-   - Utilisez un service d'hébergement compatible avec Spring Boot et Angular pour déployer l'application.
-
 ## Technologies Utilisées
 
-- **Backend** : Java, Spring Boot
-- **Frontend** : Angular
-- **CI/CD** : Jenkins
-- **Tests** : JUnit, Mockito pour les tests unitaires, JMeter pour les tests de performance
+- **Outils de développement:** Maven, Git.
+- **Backend** : Java 21, Spring Boot.
+- **Frontend** : Angular.
+- **CI/CD** : Jenkins.
+- **Tests** : JUnit 5, Mockito pour les tests unitaires et d'intégrations, Jacoco pour la couverture, JMeter pour les tests de performance.
 
 ## Contribution
 
 Merci de lire les fichiers suivants avant de contribuer :
-
-- CONTRIBUTING.md
-- CODE_OF_CONDUCT.md
+- [Changelog.md](Changelog.md)
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ## License
 

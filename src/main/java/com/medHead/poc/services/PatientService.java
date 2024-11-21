@@ -1,151 +1,148 @@
 package com.medHead.poc.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medHead.poc.model.Patient;
 import org.springframework.stereotype.Service;
-import com.medHead.poc.entities.Patient;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 import java.util.Optional;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.UUID;
 
 /**
  * Service pour gérer les patients et leur attribution à des services médicaux.
- * Utilise un stockage en mémoire pour les besoins de démonstration ou de développement.
  */
 @Service
 public class PatientService {
 
-    private final List<Patient> patients = new ArrayList<>();                       // Stockage en mémoire des patients
-    private final AtomicLong idGenerator = new AtomicLong(1);             // Générateur d'ID unique
-    private final Map<String, Integer> specialityDictionary = new HashMap<>();      // Dictionnaire des spécialités
+    private final List<Patient> patients = new ArrayList<>();                                   // Stockage en mémoire des patients
+    private final Map<String, Integer> specialityDictionary = new HashMap<>();                  // Dictionnaire des spécialités
+    private static final String SPECIALITIES_FILE = "src/main/resources/specialities.json";
 
     /**
-     * Initialise le dictionnaire des spécialités.
-     * Les spécialités sont associées à des groupes de services (par exemple, médecine générale).
-     * Dans une version finale, ce dictionnaire pourrait être externalisé dans un fichier JSON ou une base de données.
+     * Constructeur du service. Charge le dictionnaire des spécialités depuis le fichier JSON.
      */
     public PatientService() {
-        specialityDictionary.put("", 5);                                            //Groupe de médecine générale
-        specialityDictionary.put("Anesthésie", 1);                                  //Anesthésie
-        specialityDictionary.put("Soins intensifs", 1);                             //Anesthésie
-        specialityDictionary.put("Oncologie clinique", 2);                          //Oncologie clinique
-        specialityDictionary.put("Spécialités dentaires supplémentaires", 3);       //Groupe dentaire
-        specialityDictionary.put("Radiologie dentaire et maxillo-faciale", 3);      //Groupe dentaire
-        specialityDictionary.put("Endodontie", 3);                                  //Groupe dentaire
-        specialityDictionary.put("Chirurgie buccale et maxillo-faciale", 3);        //Groupe dentaire
-        specialityDictionary.put("Pathologie buccale et maxillo-faciale", 2);       //Groupe dentaire
-        specialityDictionary.put("Orthodontie", 3);                                 //Groupe dentaire
-        specialityDictionary.put("Dentisterie pédiatrique", 3);                     //Groupe dentaire
-        specialityDictionary.put("Parodontie", 3);                                  //Groupe dentaire
-        specialityDictionary.put("Prosthodontie", 3);                               //Groupe dentaire
-        specialityDictionary.put("Dentisterie restauratrice", 3);                   //Groupe dentaire
-        specialityDictionary.put("Dentisterie de soins spéciaux", 3);               //Groupe dentaire
-        specialityDictionary.put("Médecine d'urgence", 4);                          //Médecine d'urgence
-        specialityDictionary.put("Médecine interne de soins aigus", 5);             //Groupe de médecine générale
-        specialityDictionary.put("Allergie", 5);                                    //Groupe de médecine générale
-        specialityDictionary.put("Médecine audiovestibulaire", 5);                  //Groupe de médecine générale
-        specialityDictionary.put("Cardiologie", 5);                                  //Groupe de médecine générale
-        specialityDictionary.put("Génétique clinique", 5);                          //Groupe de médecine générale
-        specialityDictionary.put("Neurophysiologie clinique", 5);                   //Groupe de médecine générale
-        specialityDictionary.put("Pharmacologie clinique et thérapeutique", 5);     //Groupe de médecine générale
-        specialityDictionary.put("Dermatologie", 5);                                //Groupe de médecine générale
-        specialityDictionary.put("Endocrinologie et diabète sucré", 5);             //Groupe de médecine générale
-        specialityDictionary.put("Gastroentérologie", 5);                           //Groupe de médecine générale
-        specialityDictionary.put("Médecine générale (interne)", 5);                 //Groupe de médecine générale
-        specialityDictionary.put("Médecine générale", 5);                           //Groupe de médecine générale
-        specialityDictionary.put("Médecine générale (GP) 6 mois", 5);               //Groupe de médecine générale
-        specialityDictionary.put("médecine génito-urinaire", 5);                    //Groupe de médecine générale
-        specialityDictionary.put("Médecine gériatrique", 5);                        //Groupe de médecine générale
-        specialityDictionary.put("Maladies infectieuses", 5);                       //Groupe de médecine générale
-        specialityDictionary.put("Oncologie médicale", 5);                          //Groupe de médecine générale
-        specialityDictionary.put("Ophtalmologie médicale", 5);                      //Groupe de médecine générale
-        specialityDictionary.put("Neurologie", 5);                                  //Groupe de médecine générale
-        specialityDictionary.put("Médecine du travail", 5);                         //Groupe de médecine générale
-        specialityDictionary.put("Autre", 5);                                       //Groupe de médecine générale
-        specialityDictionary.put("Médecine palliative", 5);                         //Groupe de médecine générale
-        specialityDictionary.put("Médecine de réadaptation", 5);                    //Groupe de médecine générale
-        specialityDictionary.put("Médecine rénale", 5);                             //Groupe de médecine générale
-        specialityDictionary.put("Médecine respiratoire", 5);                       //Groupe de médecine générale
-        specialityDictionary.put("Rhumatologie", 5);                                //Groupe de médecine générale
-        specialityDictionary.put("Médecine du sport et de l'exercice", 5);          //Groupe de médecine générale
-        specialityDictionary.put("Santé publique sexuelle et procréative", 6);      //Obstétrique et gynécologie
-        specialityDictionary.put("Cardiologie pédiatrique", 7);                     //Groupe pédiatrique
-        specialityDictionary.put("Pédiatrie", 7);                                   //Groupe pédiatrique
-        specialityDictionary.put("Pathologie chimique", 8);                         //Groupe de pathologie
-        specialityDictionary.put("Neuropathologie diagnostique", 8);                //Groupe de pathologie
-        specialityDictionary.put("Histopathologie médico-légale", 8);               //Groupe de pathologie
-        specialityDictionary.put("Pathologie générale", 8);                         //Groupe de pathologie
-        specialityDictionary.put("Hématologie", 8);                                 //Groupe de pathologie
-        specialityDictionary.put("Histopathologie", 8);                             //Groupe de pathologie
-        specialityDictionary.put("Immunologie", 8);                                 //Groupe de pathologie
-        specialityDictionary.put("Microbiologie médicale", 8);                      //Groupe de pathologie
-        specialityDictionary.put("Pathologie pédiatrique et périnatale", 8);        //Groupe de pathologie
-        specialityDictionary.put("Virologie", 8);                                   //Groupe de pathologie
-        specialityDictionary.put("Service de santé communautaire dentaire", 9);     //Groupe Pronostics et gestion de la santé/Santé communautaire
-        specialityDictionary.put("Service de santé communautaire médicale", 9);     //Groupe Pronostics et gestion de la santé/Santé communautaire
-        specialityDictionary.put("Santé publique dentaire", 9);                     //Groupe Pronostics et gestion de la santé/Santé communautaire
-        specialityDictionary.put("Pratique de l'art dentaire", 9);                  //Groupe Pronostics et gestion de la santé/Santé communautaire
-        specialityDictionary.put("Santé publique", 9);                              //Groupe Pronostics et gestion de la santé/Santé communautaire
-        specialityDictionary.put("Psychiatrie infantile et adolescente", 10);       //Groupe de psychiatrie
-        specialityDictionary.put("Psychiatrie légale", 10);                         //Groupe de psychiatrie
-        specialityDictionary.put("Psychiatrie générale", 10);                       //Groupe de psychiatrie
-        specialityDictionary.put("Psychiatrie de la vieillesse", 10);               //Groupe de psychiatrie
-        specialityDictionary.put("Psychiatrie des troubles d'apprentissage", 10);   //Groupe de psychiatrie
-        specialityDictionary.put("Psycothérapie", 10);                              //Groupe de psychiatrie
-        specialityDictionary.put("Radiologie clinique", 11);                        //Groupe de radiologie
-        specialityDictionary.put("Médecine nucléaire", 11);                         //Groupe de radiologie
-        specialityDictionary.put("Chirurgie cardiothoracique", 12);                 //Groupe chirurgical
-        specialityDictionary.put("Chirurgie générale", 12);                         //Groupe chirurgical
-        specialityDictionary.put("Neurochirurgie", 12);                             //Groupe chirurgical
-        specialityDictionary.put("Ophtalmologie", 12);                              //Groupe chirurgical
-        specialityDictionary.put("Otolaryngologie", 12);                            //Groupe chirurgical
-        specialityDictionary.put("Chirurgie pédiatrique", 12);                      //Groupe chirurgical
-        specialityDictionary.put("Traumatologie et chirurgie orthopédique", 12);    //Groupe chirurgical
-        specialityDictionary.put("Urologie", 12);                                   //Groupe chirurgical
-        specialityDictionary.put("Chirurgie vasculaire", 12);                       //Groupe chirurgical
-        // Ajout d'autres spécialités...
+        try {
+            loadSpecialitiesFromJson();
+        } catch (IOException e) {
+            throw new RuntimeException("Erreur lors du chargement des spécialités : " + e.getMessage(), e);
+        }
     }
 
     /**
-     * Récupère la liste de tous les patients.
-     * @return Une liste contenant tous les patients
+     * Charge le dictionnaire des spécialités depuis un fichier JSON.
+     * @throws IOException En cas d'erreur lors de la lecture du fichier.
+     */
+    private void loadSpecialitiesFromJson() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Integer> specialities = mapper.readValue(Paths.get(SPECIALITIES_FILE).toFile(), Map.class);
+        specialityDictionary.putAll(specialities);
+    }
+
+    /**
+     * Initialise un patient avec les informations nécessaires avant traitement.
+     * Valide les données reçues, assigne un service ID en fonction de la spécialité,
+     * et effectue d'autres traitements initiaux si nécessaire.
+     *
+     * @param patient L'objet Patient à initialiser.
+     * @return Le patient initialisé avec toutes les données enrichies.
+     * @throws IllegalArgumentException Si la spécialité est inconnue ou si des données requises sont manquantes.
+     */
+    public Patient initializePatient(Patient patient) {
+        // Validation des données de base
+        if (patient.getSpecialite() == null || patient.getSpecialite().isEmpty()) {
+            throw new IllegalArgumentException("La spécialité du patient est obligatoire.");
+        }
+        if (!specialityDictionary.containsKey(patient.getSpecialite())) {
+            throw new IllegalArgumentException("Spécialité inconnue : " + patient.getSpecialite());
+        }
+        // Assignation du service ID basé sur la spécialité
+        patient.setServiceId(specialityDictionary.get(patient.getSpecialite()));
+
+        // Génération d'un identifiant unique si non défini
+        if (patient.getId() == null) {
+            patient.setId(UUID.randomUUID());
+        }
+
+        // Stocker en mémoire ou envoyer au prochain traitement
+        savePatient(patient);
+        return patient;
+    }
+
+    /**
+     * Récupère tous les patients enregistrés.
+     * @return Une liste contenant tous les patients.
      */
     public List<Patient> getAllPatients() {
-        return patients;
+        return new ArrayList<>(patients); // Renvoie une copie pour éviter les modifications directes.
     }
 
     /**
      * Récupère un patient par son ID.
-     * @param id L'ID du patient à rechercher
-     * @return Un Optional contenant le patient s'il est trouvé, ou vide sinon
+     * @param id L'ID du patient à rechercher.
+     * @return Un Optional contenant le patient s'il existe.
      */
-    public Optional<Patient> getPatientById(Long id) {
-        return patients.stream().filter(p -> p.getId().equals(id)).findFirst();
+    public Optional<Patient> getPatientById(UUID id) {
+        return patients.stream()
+                .filter(p -> p.getId().equals(id))
+                .findFirst();
     }
 
     /**
-     * Sauvegarde un nouveau patient dans le stockage en mémoire.
-     * Attribue un ID unique au patient et détermine son service en fonction de sa spécialité.
-     * @param patient Le patient à sauvegarder
-     * @return Le patient sauvegardé avec un ID unique et un service assigné
+     * Enregistre un nouveau patient et assigne un service ID en fonction de sa spécialité.
+     * @param patient Le patient à enregistrer.
+     * @return Le patient enregistré avec ID et service assignés.
      */
     public Patient savePatient(Patient patient) {
-        // Assigner un serviceId basé sur la spécialité
-        patient.setServiceId(specialityDictionary.getOrDefault(patient.getSpecialite(), 0));
-        patient.setId(idGenerator.getAndIncrement());
+        int serviceId = specialityDictionary.getOrDefault(patient.getSpecialite(), -1); // -1 pour spécialité inconnue
+        // Vérification de la spécialité
+        if (serviceId <= 0) {
+            throw new IllegalArgumentException("Spécialité inconnue : " + patient.getSpecialite());
+        }
+
+        // Détermine le service ID en fonction de la spécialité.
+        patient.setServiceId(serviceId);
+
+        // Assigne un ID unique.
+        if (patient.getId() == null) {
+            patient.setId(UUID.randomUUID());
+        }
+
+        // Sauvegarde le patient.
         patients.add(patient);
         return patient;
     }
 
     /**
      * Supprime un patient par son ID.
-     * @param id L'ID du patient à supprimer
-     * @return true si le patient a été supprimé, false sinon
+     * @param id L'ID du patient à supprimer.
+     * @return true si le patient a été supprimé, false sinon.
      */
-    public boolean deletePatient(Long id) {
+    public boolean deletePatient(UUID id) {
         return patients.removeIf(p -> p.getId().equals(id));
     }
 
+    /**
+     * Récupère le dictionnaire des spécialités médicales.
+     * Le dictionnaire associe chaque spécialité à un identifiant de service unique.
+     *
+     * @return Une map contenant les spécialités en tant que clés (String)
+     *         et leurs identifiants de service correspondants (Integer).
+     */
+    public Map<String, Integer> getSpecialityDictionary() {
+        return specialityDictionary;
+    }
+
+    /**
+     * Vide la liste des patients en mémoire.
+     * Principalement utilisé pour les tests ou la réinitialisation.
+     */
+    public void clearPatients() {
+        patients.clear();
+    }
 }

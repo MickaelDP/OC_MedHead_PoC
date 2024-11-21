@@ -1,4 +1,60 @@
 # Changelog
+## [v0.003] - Refactorisation et Adoption des Standards Spring
+
+### Refactorisation
+
+- **Adoption des standards Spring** :
+  - Revue complète de l'architecture des services pour mieux respecter les conventions Spring (separation of concerns, annotations, injection de dépendances).
+  - Refactorisation des contrôleurs pour une meilleure conformité aux pratiques REST :
+    - `PatientController` : Clarification des endpoints et gestion améliorée des exceptions.
+    - `ResultController` : Gestion des réponses standardisées et meilleure documentation des points d'entrée.
+
+- **Révision des services** :
+  - `PatientService` et `ResultService` ont été adaptés pour centraliser les validations métier.
+  - `HopitalService` : Optimisation de la logique de tri et ajout de validations.
+
+- **Uniformisation des entités** :
+  - Les entités (`Patient`, `Hopital`, `Result`) ont été standardisées pour utiliser des UUIDs comme identifiants uniques.
+  - Ajustement des constructeurs pour éviter les cas où des validations sont déjà vérifiées au niveau du service.
+
+### Implémentations principales
+
+- **Complétion de la logique backend** :
+  - Tous les endpoints REST sont fonctionnels et permettent de simuler des interactions API réalistes.
+  - Ajout d'une gestion centralisée des exceptions via un `AdviceController`.
+
+- **Tests d'intégration avec Spring MockMvc** :
+  - Tests approfondis pour valider les scénarios d'utilisation via les contrôleurs.
+  - Ajout de `MockMvc` pour simuler les requêtes HTTP et valider les réponses des endpoints REST.
+
+- **Couverture des tests avec Jacoco** :
+  - Vérification d’une couverture de code de 94 %.
+  - Tests d'exception, flux standards et cas limites validés.
+
+### Tests
+
+- **Tests unitaires** :
+  - Validation complète des entités avec des tests ciblés sur les validations.
+  - Renforcement des tests de service pour inclure davantage de scénarios métier (valides et non valides).
+
+- **Tests d'intégration** :
+  - Tests pour tous les contrôleurs via `MockMvc` :
+    - `PatientControllerITest`
+    - `ResultControllerITest`
+  - Scénarios réalistes simulés avec des données valides et invalides.
+
+### Documentation
+
+- **Documentation améliorée** :
+  - Ajout de JavaDoc pour toutes les classes et méthodes critiques.
+  - Explication des étapes pour exécuter les tests avec Spring et générer le rapport de couverture Jacoco.
+
+### Statut
+
+- **Finalisation backend** :
+  - La logique backend est complètement implémentée, permettant une simulation réaliste des échanges API REST.
+  - Tous les tests unitaires et d'intégration passent avec succès.
+  - Couverture confirmée à 94 % avec Jacoco.
 
 ## [v0.002]
 ### Ajouts

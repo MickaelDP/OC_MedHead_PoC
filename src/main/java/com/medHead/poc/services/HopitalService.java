@@ -1,57 +1,54 @@
 package com.medHead.poc.services;
 
-import com.medHead.poc.entities.Hopital;
+import com.medHead.poc.entity.Hopital;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 /**
- * Service pour gérer les hôpitaux.
- * Utilise un stockage en mémoire pour les besoins de démonstration ou de développement.
+ * Service pour manipuler les objets Hopital.
+ * Fournit des méthodes pour trier et gérer les hôpitaux selon les besoins de l'application.
  */
 @Service
 public class HopitalService {
 
-    private final List<Hopital> hopitaux = new ArrayList<>();                 // Stockage en mémoire des hôpitaux
-    private final AtomicLong idGenerator = new AtomicLong(1);       // Générateur d'ID
-
     /**
-     * Ajoute un nouvel hôpital au stockage en mémoire.
-     * @param hopital L'hôpital à ajouter
-     * @return L'hôpital ajouté avec un ID unique généré
+     * Trie une liste d'hôpitaux par délai (ascendant) avec des lits disponibles.
+     * Si aucun hôpital avec des lits disponibles n'est trouvé, retourne la liste triée par délai uniquement.
+     *
+     * @param hopitaux La liste des hôpitaux à trier.
+     * @return Une liste triée des hôpitaux.
      */
-    public Hopital saveHopital(Hopital hopital) {
-        hopital.setId(idGenerator.getAndIncrement());                         // Génère un ID unique
-        hopitaux.add(hopital);
-        return hopital;
+    public List<Hopital> trierHopitauxParDelaiEtLits(List<Hopital> hopitaux) {
+        // Filtre les hôpitaux avec des lits disponibles et trie par délai.
+        List<Hopital> avecLitsDisponibles = hopitaux.stream()
+                .filter(h -> h.getNombreLitDisponible() > 0)
+                .sorted(Comparator.comparingInt(Hopital::getDelai))
+                .collect(Collectors.toList());
+
+        // Si aucun hôpital avec lits disponibles, trie uniquement par délai.
+        if (avecLitsDisponibles.isEmpty()) {
+            return hopitaux.stream()
+                    .sorted(Comparator.comparingInt(Hopital::getDelai))
+                    .collect(Collectors.toList());
+        }
+
+        return avecLitsDisponibles;
     }
 
     /**
-     * Récupère la liste de tous les hôpitaux.
-     * @return Une liste contenant tous les hôpitaux
+     * Mise à jour des lits disponibles pour un hôpital spécifique.
+     *
+     * @param hopital L'hôpital cible.
+     * @param nombreLits Le nouveau nombre de lits disponibles (doit être >= 0).
+     * @throws IllegalArgumentException Si le nombre de lits est négatif.
      */
-    public List<Hopital> getAllHopitaux() {
-        return hopitaux;
-    }
-
-    /**
-     * Récupère un hôpital par son ID.
-     * @param id L'ID de l'hôpital à rechercher
-     * @return Un Optional contenant l'hôpital s'il est trouvé, ou vide sinon
-     */
-    public Optional<Hopital> getHopitalById(Long id) {
-        return hopitaux.stream().filter(h -> h.getId().equals(id)).findFirst();
-    }
-
-    /**
-     * Récupère un hôpital par son ID.
-     * @param id L'ID de l'hôpital à rechercher
-     * @return Un Optional contenant l'hôpital s'il est trouvé, ou vide sinon
-     */
-    public boolean deleteHopital(Long id) {
-        return hopitaux.removeIf(h -> h.getId().equals(id));
+    public void mettreAJourLits(Hopital hopital, int nombreLits) {
+        if (nombreLits < 0) {
+            throw new IllegalArgumentException("Le nombre de lits disponibles ne peut pas être négatif.");
+        }
+        hopital.setNombreLitDisponible(nombreLits);
     }
 }
