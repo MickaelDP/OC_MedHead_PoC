@@ -154,7 +154,7 @@ public class PatientControllerITest {
     @Test
     void testProcessPatient() throws Exception {
         // Configurer une réponse simulée pour l'API externe, attention usage de ',' pour des raisons de localisation
-        mockServer.expect(requestTo("http://localhost:8080/api/hospitals?serviceId=5&lat=48.856600&lon=2.352200"))
+        mockServer.expect(requestTo("https://localhost:8443/api/hospitals?serviceId=5&lat=48.856600&lon=2.352200"))
                 .andRespond(withSuccess("""
             [
                 {
@@ -190,7 +190,7 @@ public class PatientControllerITest {
 
     @Test
     void testProcessPatient_NoHospitalFound() throws Exception {
-        mockServer.expect(requestTo("http://localhost:8080/api/hospitals?serviceId=5&lat=48.856600&lon=2.352200"))
+        mockServer.expect(requestTo("https://localhost:8443/api/hospitals?serviceId=5&lat=48.856600&lon=2.352200"))
                 .andRespond(withServerError());
 
         // Effectuer le test

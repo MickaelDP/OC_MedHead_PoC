@@ -1,4 +1,57 @@
 # Changelog
+# Changelog
+
+## [v0.004] - Sécurisation et documentation avec HTTPS & Swagger
+
+### **Sécurisation**
+
+- **Mise en place de HTTPS** :
+  - Activation de HTTPS pour sécuriser les échanges avec l'API.
+  - Ajout des fichiers nécessaires dans le dossier `resources` :
+    - `keystore.p12` : Keystore contenant le certificat auto-signé.
+    - `selfsigned.crt` : Certificat auto-signé pour usage local.
+  - Configuration dans `application.properties` pour utiliser le keystore avec le mot de passe et activer HTTPS :
+    - `server.ssl.enabled=true`.
+    - `server.ssl.key-store` et `server.ssl.key-store-password` ajoutés.
+
+- **Configuration de Tomcat** :
+  - Limitation du nombre maximal de threads pour renforcer la sécurité et l'évolutivité :
+    - `server.tomcat.threads.max=300`.
+    - `server.tomcat.threads.min-spare=100`.
+
+### **Documentation avec Swagger**
+
+- **Activation de SpringDoc OpenAPI** :
+  - Activation et configuration de Swagger pour documenter les endpoints REST.
+  - Ajout de la classe `SwaggerConfig` pour personnaliser la documentation de l'API :
+    - **Titre** : `API Documentation`.
+    - **Version** : `1.0`.
+    - **Description** : `Documentation pour l'API MedHead`.
+
+- **Accès à Swagger** :
+  - Documentation de l'API disponible aux URL suivantes :
+    - **Documentation JSON** : [`https://localhost:8443/v3/api-docs`](https://localhost:8443/v3/api-docs).
+    - **Interface utilisateur Swagger** : [`https://localhost:8443/swagger-ui.html`](https://localhost:8443/swagger-ui.html).
+
+### **Postman**
+
+- **Export de la collection Postman** :
+  - Export de la collection de requêtes Postman au format v2.1 pour simplifier le test de l'API.
+  - Fichier ajouté dans `resources` :
+    - `MedHead API.postman_collection.json`.
+
+- **Requêtes testées et validées** :
+  - Les endpoints principaux de l'API ont été testés avec Postman pour garantir leur bon fonctionnement en HTTPS.
+
+### **Statut**
+
+- **Stabilité** :
+  - Version stable pour le backend, permettant des interactions sécurisées avec l'API via HTTPS.
+  - Tous les tests unitaires et d'intégration sont réussis avec cette configuration.
+
+- **Couverture** :
+  - Les modifications liées à HTTPS et Swagger n'ont pas affecté la couverture de code.
+
 ## [v0.003] - Refactorisation et Adoption des Standards Spring
 
 ### Refactorisation

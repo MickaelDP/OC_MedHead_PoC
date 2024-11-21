@@ -1,6 +1,6 @@
-# Application Web de PoC pour la Réservation de Lits d'Hôpital
-![Couverture du projet](assets/cover.png)
-**Proof of Concept (PoC) pour la gestion de réservations de lits hospitaliers, intégrant des fonctionnalités de localisation, calcul de proximité, et gestion des disponibilités.**
+# Application web de PoC pour la réservation de lits d'hôpital
+![Couverture du projet](asset/cover.png)
+**Proof of Concept (PoC) pour la gestion de réservations de lits hospitaliers, intégrant des fonctionnalités de localisation, calcul de proximité et gestion des disponibilités.**
 
 ---
 
@@ -28,24 +28,29 @@ Ce projet est un Proof of Concept (PoC) visant à démontrer la faisabilité d'u
 - **Validation des réservations** avec gestion en temps réel.
 - **Simulation de trajets et gestion de la distance** entre patients et hôpitaux.
 
-L'architecture du backend est basée sur Spring Boot. Les tests unitaires et d'intégration sont réalisés avec JUnit et Mockito. **(Le frontend Angular est indiqué à titre indicatif et n'est pas encore implémenté dans cette version.)**
+L'architecture du backend est basée sur **Spring Boot**. Les tests unitaires et d'intégration sont réalisés avec **JUnit** et **Mockito**. La documentation de l'API est disponible grâce à **Swagger**.
+> **Remarque** : Le frontend Angular est mentionné à titre indicatif et sera intégré dans les futures versions.
 
 ---
 
 ## Structure du Projet
 
-### Backend
+### **Backend**
 - **`src/main/java/com/medHead/poc`** :
-    - `controller` : Contrôleurs REST (Patient, Result).
-    - `services` : Services métier pour gérer les patients, hôpitaux, et résultats.
-    - `entity` : Entités principales utilisées dans le projet (`Patient`, `Hopital`, `Result`).
-    - `toMock` : Services simulant des fonctionnalités externes comme la réservation et le calcul de distance.
-    - `runner` : Simulations pour tester le flux global via un `CommandLineRunner`.
+    - **`config`** : Configuration de Swagger, RestTemplate, etc.
+    - **`controller`** : Contrôleurs REST pour gérer les endpoints (Patient, Hôpital, etc.).
+    - **`entity`** : Entités principales utilisées dans le projet (Patient, Hôpital, Résultat).
+    - **`model`** : Objets de transfert de données (DTOs) pour structurer les requêtes et réponses.
+    - **`service`** : Contient la logique métier (gestion des patients, calcul des distances, etc.).
+    - **`PoCMedHeadApplication`** : Classe principale pour lancer l'application Spring Boot.
 
-### Tests
+### **Tests**
 - **`src/test/java/com/medHead/poc`** :
-    - `testUnitaires` : Tests unitaires avec JUnit 5.
-    - `testIntegration` : Tests d'intégration pour valider les flux API REST.
+- **Unitaires (`testUnitaire`)** :
+    - Tests ciblant les entités et services (validation, logique métier).
+- **Intégration (`testIntegration`)** :
+    - Tests vérifiant les flux globaux entre les contrôleurs et les services.
+    - Simulations de requêtes HTTP avec MockMvc.
 
 ### **Frontend** *(à titre indicatif)*
 - **`src/main/angular`** : Structure du frontend Angular prévue pour les futures versions.
@@ -54,13 +59,15 @@ L'architecture du backend est basée sur Spring Boot. Les tests unitaires et d'i
 
 ## Fonctionnalités
 
-1. **Recherche de Service** :
+1. **Recherche de Services** :
     - Permet de lister les hôpitaux offrant une spécialité spécifique.
 2. **Réservation de Lit** :
     - Sélectionne l'hôpital le plus proche avec un lit disponible et confirme la réservation.
 3. **Gestion de Proximité** :
     - Calcule automatiquement la distance et le temps de trajet vers les hôpitaux pertinents.
-4. **Simulation de Résultat** :
+4. **Documentation de l'API** :
+    - Disponible via Swagger à l'adresse `https://localhost:8443/swagger-ui.html`.
+5. **Simulation de Résultat** :
     - Génère des résultats pour suivre les interactions (patient, hôpital, lit réservé, etc.).
 
 ---
@@ -69,8 +76,9 @@ L'architecture du backend est basée sur Spring Boot. Les tests unitaires et d'i
 
 Avant de cloner et exécuter le projet, assurez-vous d'avoir installé :
 
-- **Java 21** (compatible avec Spring Boot).
+- **Java 21** (compatible avec Spring Boot 3).
 - **Maven** (pour la gestion des dépendances backend).
+- **Postman** (pour tester les endpoints REST via la collection fournie).
 - **Git** (pour cloner le dépôt).
 
 *(Les outils pour le frontend, comme Node.js, npm, et Angular CLI, sont indiqués à titre indicatif pour les futures versions.)*
@@ -93,6 +101,12 @@ Avant de cloner et exécuter le projet, assurez-vous d'avoir installé :
 2. Lancer l'application :
 	```bash
    mvn spring-boot:run
+3. Accéder à l'API :
+      ```bash
+      Swagger UI : https://localhost:8443/swagger-ui.html
+      Documentation JSON : https://localhost:8443/v3/api-docs
+   
+![Couverture du projet](asset/swagger.png)
 ### Frontend : Angular
 1. Installer les dépendances Angular :
 	  ```bash
@@ -118,11 +132,13 @@ Pour cette PoC, il est possible d'utiliser des données en mémoire pour simuler
    - Lancer les tests avec génération du rapport de couverture :
       ```bash
       target/site/jacoco/index.html
-   ![Couverture du projet](assets/jacoco94.png)
-3. **Tests de Performance (ex. avec JMeter)** :
+   ![Couverture du projet](asset/jacoco94.png)
+3. **Tests d'intégration :** 
+   - Les tests d'intégration utilisent MockMvc pour simuler des requêtes HTTP réalistes.
+4. **Tests de Performance (ex. avec JMeter) :**
    - Configurer et exécuter les scénarios de performance avec des jeux de données générés.
 
-4. **Exécution du Pipeline CI/CD** :
+5. **Exécution du Pipeline CI/CD :** 
    - Utilisez Jenkins pour automatiser les tests et le déploiement continu.
 
 ## Déploiement
@@ -131,14 +147,18 @@ Voici les étapes pour déployer l'application en production (pour une applicati
 
 1. **Pipeline CI/CD** :
    - Configuration dans Jenkins pour le déploiement continu. Voir le fichier Jenkinsfile dans le dépôt pour les détails.
-
+2. **HTTPS** :
+   - Fournir les certificats nécessaires (comme keystore.p12) pour activer HTTPS en production.
+3. **Configuration** :
+   - S'assurer que l'environnement respecte les configurations de sécurité mentionnées dans **`application.properties`**.
+   
 ## Technologies Utilisées
 
-- **Outils de développement:** Maven, Git.
-- **Backend** : Java 21, Spring Boot.
-- **Frontend** : Angular.
-- **CI/CD** : Jenkins.
-- **Tests** : JUnit 5, Mockito pour les tests unitaires et d'intégrations, Jacoco pour la couverture, JMeter pour les tests de performance.
+- **Outils de développement:** **`Maven`**, **`Git`**,**`Postman`**.
+- **Backend** : **`Java 21`**, **`Spring Boot`**.
+- **Frontend** : **`Angular`**.
+- **CI/CD** : **`Jenkins`**.
+- **Tests** : **`JUnit 5`**, **`Mockito`** , **`Jacoco (couverture)`**, **`MockMvc`**, **`JMeter`**.
 
 ## Contribution
 
