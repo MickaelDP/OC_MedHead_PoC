@@ -1,0 +1,273 @@
+{
+	"info": {
+		"_postman_id": "6474336b-66e4-4dd1-b0d6-acee7065d07e",
+		"name": "MedHead API",
+		"description": "StartFragment_Collection de requêtes pour tester les endpoints de l'API MedHead_.EndFragment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39830019"
+	},
+	"item": [
+		{
+			"name": "PatientAPI",
+			"item": [
+				{
+					"name": "Create a patient",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\r\n  \"specialite\": \"Cardiologie\",\r\n  \"responsable\": \"string\",\r\n  \"qualite\": \"string\",\r\n  \"latitude\": 0,\r\n  \"longitude\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base URL}}/api/patients",
+							"host": [
+								"{{Base URL}}"
+							],
+							"path": [
+								"api",
+								"patients"
+							]
+						},
+						"description": "Crée un nouveau patient."
+					},
+					"response": []
+				},
+				{
+					"name": "Get all patients",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base URL}}/api/patients",
+							"host": [
+								"{{Base URL}}"
+							],
+							"path": [
+								"api",
+								"patients"
+							]
+						},
+						"description": "Récupère tous les patients."
+					},
+					"response": []
+				},
+				{
+					"name": "Get patient by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base URL}}/api/patients/{{UUID patient}}",
+							"host": [
+								"{{Base URL}}"
+							],
+							"path": [
+								"api",
+								"patients",
+								"{{UUID patient}}"
+							]
+						},
+						"description": "Récupère un patient via son ID.\r\n(Paramètres dynamiques :\r\n\r\n    :id : UUID du patient.)"
+					},
+					"response": []
+				},
+				{
+					"name": "Process patient",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\r\n  \"specialite\": \"Cardiologie\",\r\n  \"responsable\": \"Frank Estein\",\r\n  \"qualite\": \"Dr.\",\r\n  \"latitude\": 0,\r\n  \"longitude\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base URL}}/api/patients/process",
+							"host": [
+								"{{Base URL}}"
+							],
+							"path": [
+								"api",
+								"patients",
+								"process"
+							]
+						},
+						"description": "Lance le traitement du patient pour réserver un lit et donner une destination.\r\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a patient",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{Base URL}}/api/patients/{{UUID patient}}",
+							"host": [
+								"{{Base URL}}"
+							],
+							"path": [
+								"api",
+								"patients",
+								"{{UUID patient}}"
+							]
+						},
+						"description": "Supprime un patient via son ID.\r\nParamètres dynamiques :\r\n\r\n    :id : UUID du patient."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Hopital API",
+			"item": [
+				{
+					"name": "Reserve a bed",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 1,\r\n  \"nom\": \"string\",\r\n  \"serviceIdsDisponibles\": [\r\n    0\r\n  ],\r\n  \"latitude\": 0,\r\n  \"longitude\": 0,\r\n  \"nombreLitDisponible\": 0,\r\n  \"delai\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base URL}}/api/reserve?simulateSuccess=true",
+							"host": [
+								"{{Base URL}}"
+							],
+							"path": [
+								"api",
+								"reserve"
+							],
+							"query": [
+								{
+									"key": "simulateSuccess",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Tente de réserver un lit dans un hôpital.\r\n?simulateSuccess=true or false"
+					},
+					"response": []
+				},
+				{
+					"name": "Get hospitals by service",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base URL}}/api/hopitaux/service/{{Service ID }}",
+							"host": [
+								"{{Base URL}}"
+							],
+							"path": [
+								"api",
+								"hopitaux",
+								"service",
+								"{{Service ID }}"
+							]
+						},
+						"description": "Récupère la liste des hôpitaux proposant le service spécifié.\r\nParamètres dynamiques :\r\n\r\n    :serviceId : ID du service recherché."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Populate-hopital API",
+			"item": [
+				{
+					"name": "Populate hopitale",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base URL}}/api/hospitals?serviceId=5&lat=40&lon=40",
+							"host": [
+								"{{Base URL}}"
+							],
+							"path": [
+								"api",
+								"hospitals"
+							],
+							"query": [
+								{
+									"key": "serviceId",
+									"value": "5"
+								},
+								{
+									"key": "lat",
+									"value": "40"
+								},
+								{
+									"key": "lon",
+									"value": "40"
+								}
+							]
+						},
+						"description": "Récupérer la liste d'hopitaux du district"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "GPS API",
+			"item": [
+				{
+					"name": "Get delai",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base URL}}/api/gps/delay?patientLat=40&patientLon=40&hospitalLat=50&hospitalLon=50",
+							"host": [
+								"{{Base URL}}"
+							],
+							"path": [
+								"api",
+								"gps",
+								"delay"
+							],
+							"query": [
+								{
+									"key": "patientLat",
+									"value": "40"
+								},
+								{
+									"key": "patientLon",
+									"value": "40"
+								},
+								{
+									"key": "hospitalLat",
+									"value": "50"
+								},
+								{
+									"key": "hospitalLon",
+									"value": "50"
+								}
+							]
+						},
+						"description": "Obtient un temps de trajet"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
