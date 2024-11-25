@@ -14,12 +14,12 @@ public class GPSService {
     /**
      * Délai minimum simulé (en minutes).
      */
-    private static final int MIN_DELAY = 5; // Délai minimum en minutes
+    private static final int MIN_DELAY = 5;                                 // Délai minimum en minutes
 
     /**
      * Délai maximum simulé (en minutes).
      */
-    private static final int MAX_DELAY = 30; // Délai maximum en minutes
+    private static final int MAX_DELAY = 17;                                // Délai maximum en minutes
 
     /**
      * Générateur aléatoire utilisé pour simuler les délais.

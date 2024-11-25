@@ -123,11 +123,11 @@ public class ResultServiceUTest {
         assertNull(resultService.getResultById(UUID.randomUUID()), "Aucun résultat ne devrait être trouvé dans une liste vide.");
     }
 
-/**
- * Test de la méthode ResultService.getAllResults().
- * Vérifie que tous les résultats sauvegardés dans le service sont correctement retournés.
- */
- @Test
+    /**
+    * Test de la méthode ResultService.getAllResults().
+    * Vérifie que tous les résultats sauvegardés dans le service sont correctement retournés.
+    */
+    @Test
     void testGetAllResults_ReturnsExpectedResults() {
         // Ajouter des résultats
         Result result1 = new Result(UUID.randomUUID(), "Cardiologie", "Hôpital A", 10, true, true);
@@ -144,5 +144,31 @@ public class ResultServiceUTest {
         assertEquals(2, results.size(), "Il doit y avoir deux résultats.");
         assertTrue(results.contains(result1), "La liste doit contenir result1.");
         assertTrue(results.contains(result2), "La liste doit contenir result2.");
+    }
+
+    /**
+     * Teste la suppression d'un résultat inexistant.
+     * Vérifie que la méthode deleteResult retourne false lorsqu'un ID
+     * de résultat qui n'existe pas est fourni.
+     */
+    @Test
+    void testDeleteNonExistentResult() {
+        boolean deleted = resultService.deleteResult(UUID.randomUUID());
+        assertFalse(deleted, "La suppression d'un résultat inexistant doit retourner false.");
+    }
+
+    /**
+     * Teste la limite de taille du cache dans le service ResultService.
+     * Vérifie que le cache ne contient jamais plus de 100 résultats, conformément
+     * à la limite définie dans la classe ResultService.
+     */
+    @Test
+    void testCacheSizeLimit() {
+        for (int i = 0; i < 110; i++) {
+            resultService.saveResult(new Result(UUID.randomUUID(), "Specialite" + i, "Hopital" + i, i, true, true));
+        }
+
+        List<Result> results = resultService.getAllResults();
+        assertEquals(100, results.size(), "Le cache ne doit pas contenir plus de 100 résultats.");
     }
 }

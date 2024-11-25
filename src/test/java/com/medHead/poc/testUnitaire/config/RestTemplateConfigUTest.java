@@ -8,6 +8,10 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/**
+ * Classe de test unitaire pour vérifier la configuration et l'injection
+ * des dépendances dans le contexte Spring Boot.
+ */
 @SpringBootTest
 public class RestTemplateConfigUTest {
     @Autowired
@@ -16,6 +20,10 @@ public class RestTemplateConfigUTest {
     @Autowired
     private RestTemplate restTemplate;
 
+    /**
+     * Vérifie que les beans PopulateHopitalService et RestTemplate
+     * sont correctement injectés par le conteneur Spring.
+     */
     @Test
     void testRestTemplateInjection() {
         assertNotNull(populateHopitalService, "Le service PopulateHopitalService n'a pas été injecté.");

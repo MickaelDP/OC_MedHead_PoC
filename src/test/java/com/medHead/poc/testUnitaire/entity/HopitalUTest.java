@@ -88,4 +88,28 @@ public class HopitalUTest {
         IllegalArgumentException servicesVideException = assertThrows(IllegalArgumentException.class, () -> hopital.setServiceIdsDisponibles(List.of()));
         assertEquals("La liste des services disponibles ne peut pas être null ou vide.", servicesVideException.getMessage());
     }
+
+    /**
+     * Teste la méthode toString de l'entité Hopital.
+     * Vérifie que la représentation sous forme de chaîne de l'objet Hopital correspond au format attendu.
+     */
+    @Test
+    void testToString() {
+        Hopital hopital = new Hopital("Hopital Central", List.of(1, 2, 3), 48.8566, 2.3522, 10);
+        String expectedString = "Hopital{id=null, nom='Hopital Central', serviceIdsDisponibles=[1, 2, 3], latitude=48.8566, longitude=2.3522, nombreLitDisponible=10, delai=9999}";
+        assertEquals(expectedString, hopital.toString());
+    }
+
+
+    /**
+     * Teste l'immuabilité de la liste des IDs des services disponibles.
+     * Vérifie que la liste retournée par getServiceIdsDisponibles() est immuable et ne peut pas être modifiée directement.
+     */
+    @Test
+    void testServiceIdsImmutability() {
+        Hopital hopital = new Hopital("Hopital A", List.of(1, 2, 3), 48.8566, 2.3522, 10);
+        List<Integer> serviceIds = hopital.getServiceIdsDisponibles();
+
+        assertThrows(UnsupportedOperationException.class, () -> serviceIds.add(4));
+    }
 }

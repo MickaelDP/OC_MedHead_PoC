@@ -29,7 +29,6 @@ public class ReserveController {
     /**
      * Endpoint pour réserver un lit dans un hôpital.
      * La requête attend un objet Hopital en tant que corps JSON.
-     *
      * @param hopital L'hôpital cible pour la réservation.
      * @param simulateSuccess Un paramètre boolean pour simuler le succès ou l'échec de la réservation.
      * @return Une réponse HTTP :

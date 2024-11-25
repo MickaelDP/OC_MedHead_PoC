@@ -1,5 +1,7 @@
 package com.medHead.poc.entity;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -71,7 +73,7 @@ public class Hopital {
     }
 
     public List<Integer> getServiceIdsDisponibles() {
-        return serviceIdsDisponibles;
+        return Collections.unmodifiableList(serviceIdsDisponibles);
     }
 
     /**
@@ -83,7 +85,7 @@ public class Hopital {
         if (serviceIdsDisponibles == null || serviceIdsDisponibles.isEmpty()) {
             throw new IllegalArgumentException("La liste des services disponibles ne peut pas être null ou vide.");
         }
-        this.serviceIdsDisponibles = serviceIdsDisponibles;
+        this.serviceIdsDisponibles = new ArrayList<>(serviceIdsDisponibles);
     }
 
     public double getLatitude() {

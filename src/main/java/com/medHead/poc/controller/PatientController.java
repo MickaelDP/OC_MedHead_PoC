@@ -5,7 +5,6 @@ import com.medHead.poc.model.Patient;
 import com.medHead.poc.model.Result;
 import com.medHead.poc.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +29,6 @@ public class PatientController {
     private final HopitalService hopitalService;
     private final ReserveService reserveService;
     private final ResultService resultService;
-    private final PatientTrackerService tracker;
 
     @Autowired
     public PatientController(
@@ -39,15 +37,13 @@ public class PatientController {
             GPSService gpsService,
             HopitalService hopitalService,
             ReserveService reserveService,
-            ResultService resultService,
-            PatientTrackerService tracker) {
+            ResultService resultService) {
         this.patientService = patientService;
         this.populateHopitalService = populateHopitalService;
         this.gpsService = gpsService;
         this.hopitalService = hopitalService;
         this.reserveService = reserveService;
         this.resultService = resultService;
-        this.tracker = tracker;
     }
 
     /**
@@ -107,14 +103,7 @@ public class PatientController {
      */
     @PostMapping("/process")
     public ResponseEntity<Result> processPatient(@RequestBody Patient patient) {
-        UUID patientId = patient.getId();
-
         try {
-            // Verifier si le patient est deja en cours de traitement
-            if (!tracker.startProcessing(patientId)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
-            }
-
             // 1. Initialiser le patient
             patient = patientService.initializePatient(patient);
             logger.info("Patient initialized: {}", patient);
@@ -146,24 +135,17 @@ public class PatientController {
             List<Hopital> sortedHospitals = hopitalService.trierHopitauxParDelaiEtLits(hopitaux);
 
             // 5. Tenter une reservation
-            Hopital reservedHospital = null;
-            boolean bedReserved = false;
+            Hopital reservedHospital = sortedHospitals.stream()
+                    .filter(hopital -> reserveService.reserveBed(hopital, true))
+                    .findFirst()
+                    .orElse(null);
 
-            for (Hopital hopital : sortedHospitals) {
-                if (reserveService.reserveBed(hopital, true)) {
-                    reservedHospital = hopital;
-                    bedReserved = true;
-                    logger.info("Reservation reussie pour l'hopital : {}", hopital.getNom());
-                    break;
-                } else {
-                    logger.warn("Echec de la reservation pour l'hopital : {}", hopital.getNom());
-                }
-            }
+            boolean bedReserved = reservedHospital != null;
 
             // 6. Fallback sur le premier hopital si aucune reservation n'a reussi
-            if (reservedHospital == null) {
-                reservedHospital = sortedHospitals.getFirst();
-                logger.info("Fallback sur l'hopital : {}", reservedHospital.getNom());
+            if (reservedHospital == null && !sortedHospitals.isEmpty()) {
+                reservedHospital = sortedHospitals.get(0);
+                logger.info("Fallback sur l'hôpital : {}", reservedHospital.getNom());
             }
 
             // 7. Creer un resultat
@@ -176,21 +158,12 @@ public class PatientController {
                     bedReserved
             );
 
-            // 8. Sauvegarder le resultat
-            resultService.saveResult(result);
-
-            // 9. Nettoyer les donnees du patient
-            patientService.deletePatient(patientId);
-
-            // 10. Retourner le resultat
+            //8. Retourner le resultat
             logger.info("Resultat genere pour le patient : {}", result);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             logger.error("Une erreur s'est produite lors du traitement du patient : {}", e.getMessage(), e);
             return ResponseEntity.status(500).body(null);
-        } finally {
-            // Supprimer l'ID du patient du tracker
-            tracker.endProcessing(patientId);
         }
     }
 }

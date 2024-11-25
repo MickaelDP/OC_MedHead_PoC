@@ -5,9 +5,10 @@ import com.medHead.poc.model.Patient;
 import com.medHead.poc.model.Result;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  * Service pour gérer les résultats associés aux patients.
@@ -16,7 +17,15 @@ import java.util.UUID;
 @Service
 public class ResultService {
 
-    private final List<Result> results = new ArrayList<>(); // Stockage en mémoire des résultats (pour PoC)
+    private static final Logger logger = LoggerFactory.getLogger(ResultService.class);
+
+    // Cache avec limite de taille
+    private final Map<UUID, Result> results = Collections.synchronizedMap(new LinkedHashMap<>() {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<UUID, Result> eldest) {
+            return size() > 100; // Limite à 100 résultats
+        }
+    });
 
     /**
      * Crée un objet `Result` basé sur les informations calculées dans l'application.
@@ -29,19 +38,22 @@ public class ResultService {
      * @throws IllegalArgumentException si les informations sont invalides
      */
     public Result createAndSaveResult(Patient patient, Hopital hopital, boolean litReserve) {
-        validateInputs(patient, hopital);
+        try {
+            validateInputs(patient, hopital);
 
-        Result result = new Result(
-                patient.getId(),
-                patient.getSpecialite(),
-                hopital.getNom(),
-                hopital.getDelai(),
-                true, // La spécialité est nécessairement disponible, sinon cet hôpital ne serait pas sélectionné
-                litReserve
-        );
-
-        saveResult(result);
-        return result;
+            Result result = new Result(
+                    patient.getId(),
+                    patient.getSpecialite(),
+                    hopital.getNom(),
+                    hopital.getDelai(),
+                    true,
+                    litReserve
+            );
+            return saveResult(result);
+        } catch (IllegalArgumentException e) {
+            logger.error("Erreur lors de la création d'un résultat : {}", e.getMessage());
+            throw e;
+        }
     }
 
     /**
@@ -66,8 +78,10 @@ public class ResultService {
      * @return Le résultat sauvegardé
      */
     public Result saveResult(Result result) {
-        result.setId(UUID.randomUUID()); // Génère un ID unique pour chaque résultat
-        results.add(result);
+        if (result.getId() == null) {
+            result.setId(UUID.randomUUID());
+        }
+        results.put(result.getId(), result); // Ajoute le résultat au cache
         return result;
     }
 
@@ -76,19 +90,15 @@ public class ResultService {
      * @return Une liste de résultats
      */
     public List<Result> getAllResults() {
-        return new ArrayList<>(results); // Retourne une copie pour éviter les modifications externes
+        return new ArrayList<>(results.values());
     }
-
     /**
      * Récupère un résultat par son ID.
      * @param id L'ID du résultat recherché
      * @return Le résultat correspondant, ou null si non trouvé
      */
     public Result getResultById(UUID id) {
-        return results.stream()
-                .filter(result -> result.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        return results.get(id);
     }
 
     /**
@@ -97,6 +107,10 @@ public class ResultService {
      * @return true si le résultat a été supprimé, false sinon
      */
     public boolean deleteResult(UUID id) {
-        return results.removeIf(result -> result.getId().equals(id));
+        return results.remove(id) != null;
+    }
+
+    public void clearResults() {
+        results.clear(); // Vide la liste des résultats pour libérer la mémoire
     }
 }

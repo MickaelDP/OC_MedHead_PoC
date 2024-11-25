@@ -8,7 +8,6 @@ import com.medHead.poc.services.PatientService;
 import com.medHead.poc.services.PopulateHopitalService;
 import com.medHead.poc.services.GPSService;
 import com.medHead.poc.services.HopitalService;
-import com.medHead.poc.services.PatientTrackerService;
 import com.medHead.poc.services.ReserveService;
 import com.medHead.poc.services.ResultService;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,8 +44,6 @@ public class PatientControllerUTest {
     @Mock
     private ReserveService reserveService;
 
-    @Mock
-    private PatientTrackerService tracker;
 
     @Mock
     private ResultService resultService;
@@ -58,8 +55,6 @@ public class PatientControllerUTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);                                // Initialise les mocks
-        when(tracker.startProcessing(any(UUID.class))).thenReturn(true);      // Valeur par défaut
-        doNothing().when(tracker).endProcessing(any(UUID.class));                   // Mock pour endProcessing
     }
 
 
@@ -250,9 +245,6 @@ public class PatientControllerUTest {
         UUID patientId = UUID.randomUUID();
         patient.setId(patientId);
 
-        // Simule une exception levée par `startProcessing`
-        when(tracker.startProcessing(patientId)).thenThrow(new RuntimeException("Erreur simulée"));
-
         // Appel du contrôleur
         ResponseEntity<Result> response = patientController.processPatient(patient);
 
@@ -260,11 +252,5 @@ public class PatientControllerUTest {
         assertNotNull(response, "La réponse ne doit pas être null.");
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode(), "Le statut HTTP doit être 500.");
         assertNull(response.getBody(), "Le corps de la réponse doit être null.");
-
-        // Vérifie que `startProcessing` a été appelé
-        verify(tracker).startProcessing(patientId);
-
-        // Vérifie que `endProcessing` a été appelé malgré l'exception
-        verify(tracker).endProcessing(patientId);
     }
 }

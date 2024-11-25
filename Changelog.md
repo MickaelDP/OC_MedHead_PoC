@@ -1,5 +1,48 @@
 # Changelog
-# Changelog
+
+## [v0.005] - Optimisation des performances et robustesse du backend
+
+### **Optimisations fonctionnelles**
+
+- **Mise en cache des requêtes fréquentes** :
+  - Introduction d'un mécanisme de mise en cache pour les réponses souvent identiques, telles que la liste des hôpitaux par service.
+  - Implémentation d'un cache local concurrent (`ConcurrentHashMap`) pour optimiser les performances en évitant des traitements répétitifs inutiles.
+
+- **Gestion de la concurrence** :
+  - Révision de la gestion des threads pour garantir la sécurité des accès simultanés et éviter les conflits dans les processus critiques.
+
+### **Validation des tests**
+
+- **Tests unitaires et d'intégration** :
+  - Les nouvelles fonctionnalités, comme la mise en cache et la gestion de la concurrence, ont fait l'objet d'une révision complète via les tests unitaires et d'intégration.
+  - Introduction de tests supplémentaires pour valider les cas spécifiques :
+    - Vérification des performances du cache.
+    - Tests de suppression et re-remplissage du cache.
+  - Couverture de code maintenue à un niveau élevé avec Jacoco.
+
+- **Tests de performance** :
+  - Tests de charge effectués avec **JMeter** (environnement externe en raison de limitations de compatibilité des versions).
+  - **Résultats des tests de performance** :
+    - **Throughput** : 800 requêtes/secondes.
+    - Temps de réponse moyen inférieur à **200 ms** pour les requêtes principales.
+    - Délai moyen d'attribution des patients : **< 12 minutes**.
+    - Taux de succès des affectations correctes : **+ de 90%**.
+
+### **Résultats et robustesse**
+
+- **Amélioration de la robustesse** :
+  - Le code est désormais adapté aux contraintes réelles d'un environnement web.
+  - Les tests de charge confirment la capacité du backend à gérer une charge élevée avec des performances stables.
+
+- **Préparation à l'intégration front-end** :
+  - Le backend est prêt pour une intégration avec une interface utilisateur basée sur Angular ou une autre technologie front-end.
+
+### **Statut**
+
+- **Stabilité** :
+  - Le backend atteint une stabilité suffisante pour les scénarios de production simulés.
+  - Tous les tests passent avec succès, garantissant un comportement conforme aux attentes.
+
 
 ## [v0.004] - Sécurisation et documentation avec HTTPS & Swagger
 

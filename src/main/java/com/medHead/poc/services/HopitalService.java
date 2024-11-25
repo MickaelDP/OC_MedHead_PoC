@@ -22,6 +22,12 @@ public class HopitalService {
      * @return Une liste triée des hôpitaux.
      */
     public List<Hopital> trierHopitauxParDelaiEtLits(List<Hopital> hopitaux) {
+
+        // Vérification que la liste n'est pas nulle
+        if (hopitaux == null) {
+            throw new IllegalArgumentException("La liste des hôpitaux ne peut pas être null.");
+        }
+
         // Filtre les hôpitaux avec des lits disponibles et trie par délai.
         List<Hopital> avecLitsDisponibles = hopitaux.stream()
                 .filter(h -> h.getNombreLitDisponible() > 0)
@@ -34,7 +40,6 @@ public class HopitalService {
                     .sorted(Comparator.comparingInt(Hopital::getDelai))
                     .collect(Collectors.toList());
         }
-
         return avecLitsDisponibles;
     }
 
@@ -46,6 +51,10 @@ public class HopitalService {
      * @throws IllegalArgumentException Si le nombre de lits est négatif.
      */
     public void mettreAJourLits(Hopital hopital, int nombreLits) {
+        if (hopital == null) {
+            throw new IllegalArgumentException("L'hôpital ne peut pas être null.");
+        }
+
         if (nombreLits < 0) {
             throw new IllegalArgumentException("Le nombre de lits disponibles ne peut pas être négatif.");
         }

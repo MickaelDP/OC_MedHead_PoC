@@ -5,6 +5,7 @@ import com.medHead.poc.services.PatientService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -29,6 +30,8 @@ import java.util.UUID;
 @SpringBootTest                                                                                         // Charge le contexte complet de Spring
 @AutoConfigureMockMvc
 public class PatientControllerITest {
+    @Value("${external.api.url}")
+    private String apiUrl;
 
     @Autowired
     private MockMvc mockMvc;                                                                            // Simule les appels HTTP
@@ -154,7 +157,7 @@ public class PatientControllerITest {
     @Test
     void testProcessPatient() throws Exception {
         // Configurer une réponse simulée pour l'API externe, attention usage de ',' pour des raisons de localisation
-        mockServer.expect(requestTo("https://localhost:8443/api/hospitals?serviceId=5&lat=48.856600&lon=2.352200"))
+        mockServer.expect(requestTo(apiUrl + "/hospitals?serviceId=5&lat=48.856600&lon=2.352200"))
                 .andRespond(withSuccess("""
             [
                 {
@@ -190,8 +193,8 @@ public class PatientControllerITest {
 
     @Test
     void testProcessPatient_NoHospitalFound() throws Exception {
-        mockServer.expect(requestTo("https://localhost:8443/api/hospitals?serviceId=5&lat=48.856600&lon=2.352200"))
-                .andRespond(withServerError());
+        mockServer.expect(requestTo(apiUrl + "/hospitals?serviceId=5&lat=48.856600&lon=2.352200"))
+                .andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
 
         // Effectuer le test
         String patientJson = """

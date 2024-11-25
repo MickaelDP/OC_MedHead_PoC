@@ -1,6 +1,6 @@
 package com.medHead.poc.services;
 
-import com.medHead.poc.PoCMedHeadApplication;
+import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Service pour récupérer les hôpitaux en fonction d'un serviceId et d'une localisation.
+ * Utilise un cache local pour optimiser les performances et réduire les appels à l'API externe.
  */
 @Service
 public class PopulateHopitalService {
@@ -24,13 +26,24 @@ public class PopulateHopitalService {
     @Value("${external.api.url}")
     private String apiUrl;                                                                                  // URL de l'API externe, configurée dans l'application.properties
 
-    public PopulateHopitalService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    private static Logger logger = LoggerFactory.getLogger(PopulateHopitalService.class);
 
-    //setter apiURl
+    /**
+     * Cache local pour stocker les résultats des appels API en fonction de la clé unique.
+     * Utilise un ConcurrentHashMap pour garantir la sécurité des threads.
+     */
+    private final ConcurrentHashMap<String, List<Hopital>> hospitalCache = new ConcurrentHashMap<>();
+
+    /**
+     * Définit l'URL de l'API externe.
+     * @param apiUrl URL de l'API externe.
+     */
     public void setApiUrl(String apiUrl) {
         this.apiUrl = apiUrl;
+    }
+
+    public PopulateHopitalService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     /**
@@ -40,27 +53,25 @@ public class PopulateHopitalService {
 
     /**
      * Récupère la liste des hôpitaux offrant un service spécifique à partir de leur ID.
-     * Cette méthode retourne une liste d'hôpitaux correspondant à l'ID de service demandé.
-     * Si aucun hôpital n'offre ce service, une liste vide est retournée.
-     * L'ID de service doit être un entier positif, sinon une exception est levée.
-     *
      * @param serviceId L'ID du service à rechercher (doit être > 0).
-     * @return Une liste d'objets Hopital qui offrent le service correspondant.
-     *         Retourne une liste vide si aucun hôpital n'offre ce service.
-     * @throws IllegalArgumentException Si l'ID du service est inférieur ou égal à zéro.
+     * @param latitude  Latitude géographique du patient (entre -90 et 90).
+     * @param longitude Longitude géographique du patient (entre -180 et 180).
+     * @return Une liste d'objets Hopital offrant le service demandé ou une liste vide.
+     * @throws IllegalArgumentException Si les entrées sont invalides.
      */
     public List<Hopital> getHospitalsByServiceId(int serviceId, double latitude, double longitude) {
-        Logger logger = LoggerFactory.getLogger(PoCMedHeadApplication.class);
+        logger.info("Requête pour serviceId={} avec latitude={}, longitude={}", serviceId, latitude, longitude);
 
         // Validation des entrées
-        if (serviceId <= 0) {
-            throw new IllegalArgumentException("L'ID du service doit être un entier positif.");
-        }
-        if (latitude < -90 || latitude > 90) {
-            throw new IllegalArgumentException("La latitude doit être comprise entre -90 et 90.");
-        }
-        if (longitude < -180 || longitude > 180) {
-            throw new IllegalArgumentException("La longitude doit être comprise entre -180 et 180.");
+        validateInputs(serviceId, latitude, longitude);
+
+        // Génération de la clé unique pour le cache
+        String cacheKey = generateCacheKey(serviceId, latitude, longitude);
+
+        // Vérification dans le cache
+        if (hospitalCache.containsKey(cacheKey)) {
+            logger.info("Résultat trouvé dans le cache pour la clé : {}", cacheKey);
+            return hospitalCache.get(cacheKey);
         }
 
         // Construction de l'URL de la requête
@@ -86,5 +97,51 @@ public class PopulateHopitalService {
 
         // Conversion du tableau en liste
         return List.of(response);
+    }
+
+    /**
+     * Nettoyage des ressources avant la destruction du bean.
+     */
+    @PreDestroy
+    public void cleanup() {
+        logger.info("Aucune ressource spécifique à nettoyer dans RestTemplate (SimpleClientHttpRequestFactory).");
+    }
+
+    /**
+     * Génère une clé unique pour le cache basée sur le serviceId, latitude et longitude.
+     * @param serviceId L'ID du service demandé.
+     * @param latitude  Latitude géographique.
+     * @param longitude Longitude géographique.
+     * @return Une chaîne unique représentant la clé pour le cache.
+     */
+    private String generateCacheKey(int serviceId, double latitude, double longitude) {
+        return serviceId + "_" + latitude + "_" + longitude;
+    }
+
+    /**
+     * Valide les entrées utilisateur pour éviter les valeurs incorrectes.
+     * @param serviceId L'ID du service demandé (doit être > 0).
+     * @param latitude  Latitude géographique (entre -90 et 90).
+     * @param longitude Longitude géographique (entre -180 et 180).
+     * @throws IllegalArgumentException Si une entrée est invalide.
+     */
+    private void validateInputs(int serviceId, double latitude, double longitude) {
+        if (serviceId <= 0) {
+            throw new IllegalArgumentException("L'ID du service doit être un entier positif.");
+        }
+        if (latitude < -90 || latitude > 90) {
+            throw new IllegalArgumentException("La latitude doit être comprise entre -90 et 90.");
+        }
+        if (longitude < -180 || longitude > 180) {
+            throw new IllegalArgumentException("La longitude doit être comprise entre -180 et 180.");
+        }
+    }
+
+    /**
+     * Vide le cache local.
+     */
+    public void clearCache() {
+        hospitalCache.clear();
+        logger.info("Cache vidé.");
     }
 }

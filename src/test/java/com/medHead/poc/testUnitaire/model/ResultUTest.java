@@ -109,4 +109,17 @@ public class ResultUTest {
         assertFalse(result.isSpecialiteDisponible());
         assertFalse(result.isLitReserve());
     }
+
+    /**
+     * Teste la méthode toString de la classe Result.
+     * Vérifie que la représentation textuelle de l'objet Result correspond aux attentes, en incluant tous les attributs de l'objet.
+     */
+    @Test
+    void testToString() {
+        Result result = new Result(UUID.randomUUID(), "Urgence", "Hopital F", 15, true, false);
+        String expectedString = "Result {id=" + result.getId() +
+                ", patientId=" + result.getPatientId() +
+                ", spécialité='Urgence', hôpital='Hopital F', délai=15 minutes, spécialité disponible=Oui, lit réservé=Non}";
+        assertEquals(expectedString, result.toString());
+    }
 }

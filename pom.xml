@@ -63,6 +63,17 @@
 			<artifactId>jakarta.el</artifactId>
 			<version>4.0.2</version>
 		</dependency>
+		<!-- Dépendance pour HttpClient (Apache) -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.4.14</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -78,6 +89,7 @@
 				<executions>
 					<!-- Prépare le rapport après les tests -->
 					<execution>
+						<id>prepare-agent</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
@@ -91,6 +103,36 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<!-- Plugin JMeter -->
+			<plugin>
+				<groupId>com.lazerycode.jmeter</groupId>
+				<artifactId>jmeter-maven-plugin</artifactId>
+				<version>3.6.0</version>
+				<executions>
+					<!-- Génération des fichiers de configuration -->
+					<execution>
+						<id>configuration</id>
+						<goals>
+							<goal>configure</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>jmeter-tests</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jmeter</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<testFilesDirectory>src/test/java/com/medHead/poc/JMeter</testFilesDirectory>
+					<resultsDirectory>${project.build.directory}/jmeter/results</resultsDirectory>
+					<resultsFileFormat>xml</resultsFileFormat>
+					<jmeterExtensions>
+						<artifact>kg.apc:jmeter-plugins-perfmon:2.1</artifact>
+					</jmeterExtensions>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

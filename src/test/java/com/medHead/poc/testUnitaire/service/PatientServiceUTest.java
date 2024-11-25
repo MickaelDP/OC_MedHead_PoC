@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
 /**
  * Classe de test pour le service PatientService.
  */
@@ -186,5 +187,17 @@ public class PatientServiceUTest {
         // Vérifier que l'ID reste le même
         assertEquals(existingId, initializedPatient.getId(), "L'ID existant doit être conservé.");
         assertEquals(5, initializedPatient.getServiceId(), "Le service ID doit correspondre à la spécialité.");
+    }
+
+    /**
+     * Teste la limite de mémoire pour le stockage des patients.
+     * Vérifie que le nombre maximum de patients en mémoire est limité à 1000.
+     */
+    @Test
+    void testMemoryLimit() {
+        for (int i = 0; i < 1100; i++) {
+            patientService.savePatient(new Patient("Cardiologie", "Dr. Smith", "Qualité A", 48.8566, 2.3522));
+        }
+        assertEquals(1000, patientService.getAllPatients().size(), "Le nombre de patients doit être limité à 1000.");
     }
 }

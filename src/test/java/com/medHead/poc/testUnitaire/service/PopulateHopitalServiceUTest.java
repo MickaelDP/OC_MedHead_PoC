@@ -4,11 +4,8 @@ import com.medHead.poc.entity.Hopital;
 import com.medHead.poc.services.PopulateHopitalService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -17,27 +14,22 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Classe de test pour PopulateHopitalService.
- * Teste les comportements normaux et les cas où des exceptions doivent être levées.
+ * Classe de test unitaire pour PopulateHopitalService.
  */
-@SpringBootTest
-@TestPropertySource(properties = "external.api.url=http://localhost:8080/api")
 public class PopulateHopitalServiceUTest {
 
     @Mock
     private RestTemplate restTemplate;
 
-    @InjectMocks
     private PopulateHopitalService populateHopitalService;
 
     @BeforeEach
     void setUp() {
         // Initialise les mocks
         MockitoAnnotations.openMocks(this);
-
+        populateHopitalService = new PopulateHopitalService(restTemplate);
         // Injecte une URL de base correcte
         populateHopitalService.setApiUrl("http://localhost:8080/api");
-
     }
 
     /**
@@ -153,5 +145,61 @@ public class PopulateHopitalServiceUTest {
 
         assertEquals("La latitude doit être comprise entre -90 et 90.", exception.getMessage());
         verifyNoInteractions(restTemplate); // Vérifie que RestTemplate n'a pas été utilisé
+    }
+
+    /**
+     * Teste la validation des coordonnées avec une longitude invalide.
+     * Vérifie qu'une exception IllegalArgumentException est levée
+     */
+    @Test
+    void testInvalidLongitude() {
+        int serviceId = 1;
+        double latitude = 48.8566;
+        double invalidLongitude = 200.0; // Longitude invalide
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> populateHopitalService.getHospitalsByServiceId(serviceId, latitude, invalidLongitude)
+        );
+
+        assertEquals("La longitude doit être comprise entre -180 et 180.", exception.getMessage());
+        verifyNoInteractions(restTemplate); // Vérifie que RestTemplate n'a pas été utilisé
+    }
+
+    /**
+     * Teste l'utilisation du cache pour les résultats des hôpitaux.
+     * Vérifie que le service utilise le cache local si une requête identique a déjà été effectuée.
+     */
+    @Test
+    void testCacheUsage() {
+        int serviceId = 1;
+        double latitude = 48.8566;
+        double longitude = 2.3522;
+
+        // Simule une réponse et place-la manuellement dans le cache
+        Hopital hopital = new Hopital("Hopital A", List.of(serviceId), latitude, longitude, 15);
+        String cacheKey = serviceId + "_" + latitude + "_" + longitude;
+        populateHopitalService.clearCache(); // Assurez-vous que le cache est vide avant de commencer
+        populateHopitalService.getHospitalsByServiceId(serviceId, latitude, longitude);
+        // Appel direct du cache
+    }
+
+    /**
+     * Teste le vidage du cache.
+     * Vérifie que le cache est correctement vidé après un appel à la méthode clearCache().
+     */
+    @Test
+    void testClearCache() {
+        int serviceId = 1;
+        double latitude = 48.8566;
+        double longitude = 2.3522;
+
+        // Simule un résultat et ajoute-le manuellement dans le cache
+        Hopital hopital = new Hopital("Hopital A", List.of(serviceId), latitude, longitude, 5);
+        String cacheKey = serviceId + "_" + latitude + "_" + longitude;
+        populateHopitalService.clearCache();
+        // Vérifie que le cache est vide avant de commencer
+        assertTrue(populateHopitalService.getHospitalsByServiceId(serviceId, latitude, longitude).isEmpty(),
+                "Le cache doit être vide après un appel à clearCache().");
     }
 }

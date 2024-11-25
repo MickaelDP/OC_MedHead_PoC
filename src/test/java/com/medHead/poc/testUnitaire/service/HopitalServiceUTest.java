@@ -80,4 +80,15 @@ public class HopitalServiceUTest {
         assertEquals("Hopital B", result.get(0).getNom());
         assertEquals("Hopital A", result.get(1).getNom());
     }
+
+    /**
+     * Teste la méthode mettreAJourLits pour vérifier qu'il est possible
+     * de mettre à jour le nombre de lits disponibles à zéro.
+     */
+    @Test
+    void testMettreAJourLitsValeurZero() {
+        Hopital hopital = new Hopital("Hopital Test", Arrays.asList(1, 2), 48.8566, 2.3522, 10);
+        hopitalService.mettreAJourLits(hopital, 0);
+        assertEquals(0, hopital.getNombreLitDisponible(), "Le nombre de lits doit pouvoir être mis à zéro.");
+    }
 }

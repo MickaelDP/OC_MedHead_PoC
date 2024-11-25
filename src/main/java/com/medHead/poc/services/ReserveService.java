@@ -12,7 +12,6 @@ public class ReserveService {
 
     /**
      * Simule la réservation d'un lit dans un hôpital.
-     *
      * @param hopital L'hôpital cible pour la réservation.
      * @param success Indique si la réservation doit réussir (true) ou échouer (false).
      * @return true si la réservation réussit, false sinon.

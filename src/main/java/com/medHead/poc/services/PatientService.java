@@ -6,12 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Service pour gérer les patients et leur attribution à des services médicaux.
@@ -19,7 +14,12 @@ import java.util.UUID;
 @Service
 public class PatientService {
 
-    private final List<Patient> patients = new ArrayList<>();                                   // Stockage en mémoire des patients
+    private final Map<UUID, Patient> patients = Collections.synchronizedMap(new LinkedHashMap<>() {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<UUID, Patient> eldest) {
+            return size() > 1000; // Limite à 1000 patients
+        }
+    });                                                                                         // Stockage en mémoire des patients
     private final Map<String, Integer> specialityDictionary = new HashMap<>();                  // Dictionnaire des spécialités
     private static final String SPECIALITIES_FILE = "src/main/resources/specialities.json";
 
@@ -79,7 +79,7 @@ public class PatientService {
      * @return Une liste contenant tous les patients.
      */
     public List<Patient> getAllPatients() {
-        return new ArrayList<>(patients); // Renvoie une copie pour éviter les modifications directes.
+        return new ArrayList<>(patients.values());                                              // Renvoie une liste des valeurs de la map
     }
 
     /**
@@ -88,9 +88,7 @@ public class PatientService {
      * @return Un Optional contenant le patient s'il existe.
      */
     public Optional<Patient> getPatientById(UUID id) {
-        return patients.stream()
-                .filter(p -> p.getId().equals(id))
-                .findFirst();
+        return Optional.ofNullable(patients.get(id));                                           // Récupère directement depuis la map
     }
 
     /**
@@ -99,7 +97,7 @@ public class PatientService {
      * @return Le patient enregistré avec ID et service assignés.
      */
     public Patient savePatient(Patient patient) {
-        int serviceId = specialityDictionary.getOrDefault(patient.getSpecialite(), -1); // -1 pour spécialité inconnue
+        int serviceId = specialityDictionary.getOrDefault(patient.getSpecialite(), -1);// -1 pour spécialité inconnue
         // Vérification de la spécialité
         if (serviceId <= 0) {
             throw new IllegalArgumentException("Spécialité inconnue : " + patient.getSpecialite());
@@ -114,7 +112,7 @@ public class PatientService {
         }
 
         // Sauvegarde le patient.
-        patients.add(patient);
+        patients.put(patient.getId(), patient);                                                 // Ajoute ou met à jour dans la map
         return patient;
     }
 
@@ -124,7 +122,7 @@ public class PatientService {
      * @return true si le patient a été supprimé, false sinon.
      */
     public boolean deletePatient(UUID id) {
-        return patients.removeIf(p -> p.getId().equals(id));
+        return patients.remove(id) != null;                                                     // Supprime de la map et vérifie si un élément a été supprimé
     }
 
     /**

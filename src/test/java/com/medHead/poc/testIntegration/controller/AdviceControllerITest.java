@@ -36,7 +36,7 @@ public class AdviceControllerITest {
     public void testHandleIllegalArgumentException() throws Exception {
         // Simule une requête GET vers un endpoint qui lève une IllegalArgumentException
         mockMvc.perform(get("/api/patients/invalid-id"))                                  // Exemple d'URL qui déclenche l'exception
-                .andExpect(status().isBadRequest())                                                 // Vérifie que le statut est 400 BAD REQUEST
+                .andExpect(status().isBadRequest())                                                  // Vérifie que le statut est 400 BAD REQUEST
                 .andExpect(content().string("Invalid UUID string: invalid-id"));      // Vérifie le contenu du message d'erreur
     }
 }

@@ -13,8 +13,8 @@ public class PoCMedHeadApplication {
 	private static final Logger logger = LoggerFactory.getLogger(PoCMedHeadApplication.class);
 
 	public static void main(String[] args) {
-		Locale.setDefault(Locale.US);
-		var context = SpringApplication.run(PoCMedHeadApplication.class, args);
-		logger.info("Application démarrée avec succès.");
+			Locale.setDefault(Locale.US);
+			var context = SpringApplication.run(PoCMedHeadApplication.class, args);
+			logger.info("Application démarrée avec succès.");
 	}
 }

@@ -17,6 +17,23 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PatientUTest {
 
     /**
+     * Teste le constructeur paramétré de la classe Patient.
+     * Vérifie que le constructeur initialise correctement les champs de l'objet Patient avec les valeurs fournies.
+     */
+    @Test
+    void testConstructorWithParameters() {
+        Patient patient = new Patient("Urgence", "Dr. Smith", "Qualité A", 48.8566, 2.3522);
+
+        assertNotNull(patient.getId());
+        assertEquals("Urgence", patient.getSpecialite());
+        assertEquals("Dr. Smith", patient.getResponsable());
+        assertEquals("Qualité A", patient.getQualite());
+        assertEquals(48.8566, patient.getLatitude());
+        assertEquals(2.3522, patient.getLongitude());
+        assertEquals(0, patient.getServiceId()); // Par défaut
+    }
+
+    /**
      * Teste les getters et setters de l'entité Patient avec des valeurs valides.
      * Vérifie que les valeurs peuvent être modifiées et récupérées comme attendu.
      */
@@ -73,4 +90,18 @@ public class PatientUTest {
         Exception responsableException = assertThrows(IllegalArgumentException.class, () -> patient.setResponsable(null));
         assertEquals("Le nom du responsable ne peut pas être vide ou nul.", responsableException.getMessage());
     }
+
+    /**
+     * Teste la méthode toString de la classe Patient.
+     * Vérifie que la représentation textuelle de l'objet Patient correspond aux attentes, en incluant tous les champs de l'objet.
+     */
+    @Test
+    void testToString() {
+        Patient patient = new Patient("Urgence", "Dr. Smith", "Qualité A", 48.8566, 2.3522);
+        String expectedString = "Patient{id=" + patient.getId() +
+                ", serviceId=0, specialite='Urgence', responsable='Dr. Smith', qualite='Qualité A', latitude=48.8566, longitude=2.3522}";
+        assertEquals(expectedString, patient.toString());
+    }
+
+
 }
