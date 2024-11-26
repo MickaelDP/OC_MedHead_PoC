@@ -1,7 +1,9 @@
 # Application web de PoC pour la réservation de lits d'hôpital
 ![Couverture du projet](asset/cover.png)
-**Proof of Concept (PoC) pour la gestion de réservations de lits hospitaliers, intégrant des fonctionnalités de localisation, calcul de proximité et gestion des disponibilités.**
 
+### **MedHead - Gestion des réservations hospitalières**
+**Version actuelle :** v0.102  
+**Statut du projet :** Fonctionnel, prêt pour intégration et tests utilisateurs.
 ---
 
 ## Table des Matières
@@ -28,8 +30,9 @@ Ce projet est un Proof of Concept (PoC) visant à démontrer la faisabilité d'u
 - **Validation des réservations** avec gestion en temps réel.
 - **Simulation de trajets et gestion de la distance** entre patients et hôpitaux.
 
+
 L'architecture du backend est basée sur **Spring Boot**. Les tests unitaires et d'intégration sont réalisés avec **JUnit** et **Mockito**. La documentation de l'API est disponible grâce à **Swagger**.
-> **Remarque** : Le frontend Angular est mentionné à titre indicatif et sera intégré dans les futures versions.
+Le frontend est développé en **Angular**, utilisant des outils modernes pour une expérience utilisateur fluide et interactive, avec des tests automatisés réalisés via **Karma** et **Jasmine**.
 
 > **Lien vers la documentation d'architecture associée :**  
 > [OC_MedHead_ArchitecturalDocs](https://github.com/MickaelDP/OC_MedHead_ArchitecturalDocs)
@@ -47,6 +50,22 @@ L'architecture du backend est basée sur **Spring Boot**. Les tests unitaires et
     - **`service`** : Contient la logique métier (gestion des patients, calcul des distances, etc.).
     - **`PoCMedHeadApplication`** : Classe principale pour lancer l'application Spring Boot.
 
+### **Frontend - Angular** 
+- **`src/main/angular/src/app`** :
+    - **`ReservationComponent`** : Gère l'interface utilisateur et les réservations.
+        - **`reservation.component.html`** : Contient le code HTML pour la présentation des réservations.
+        - **`reservation.component.scss`** : Fichier SCSS pour le style visuel.
+        - **`reservation.component.spec.ts`** : Fichier de test pour valider les comportements du composant.
+        - **`reservation.component.ts`** : Logique principale du composant Angular.
+    - **`app.component.spec`** : Fichier de test pour valider les comportements du composant.
+- **`src/main/ressources/static`**:
+    - Contient les fichiers HTML et CSS pré-rendus pour simuler une version statique ou fallback de l'interface Angular :
+        - **`index.html`** : Page principale de l'interface.
+        - **`styles-5INURTSO.css`** : Fichier CSS généré pour les styles de la version statique.
+      - **Scripts front-end** :
+          - **`main-UGH3R4YW.js`** : Fichier JavaScript principal.
+          - **`polyfills-FFHMD2TL.js`** : Scripts pour assurer la compatibilité des fonctionnalités modernes.
+        
 ### **Tests**
 - **`src/test/java/com/medHead/poc`** :
 - **Unitaires (`testUnitaire`)** :
@@ -60,10 +79,6 @@ L'architecture du backend est basée sur **Spring Boot**. Les tests unitaires et
         - `HTTP Request.jmx` : Scénario de test pour les requêtes HTTP.
         - `HTTP Answer.jmx` : Réponses simulées pour valider les tests.
         - `output_results.txt` : Résultats du test HTTP Answer avec des indicateurs de performance.
-
-
-### **Frontend** *(à titre indicatif)*
-- **`src/main/angular`** : Structure du frontend Angular prévue pour les futures versions.
 
 ## Ressources
 
@@ -108,8 +123,10 @@ Avant de cloner et exécuter le projet, assurez-vous d'avoir installé :
 - **Postman** (pour tester les endpoints REST via la collection fournie).
 - **Git** (pour cloner le dépôt).
 - **JMeter** (pour exécuter les tests de performance).
-
-*(Les outils pour le frontend, comme Node.js, npm, et Angular CLI, sont indiqués à titre indicatif pour les futures versions.)*
+- **Node.js** (v16 ou supérieur) : Nécessaire pour exécuter Angular et installer les dépendances.
+- **npm** (v8 ou supérieur) : Gestionnaire de paquets pour installer les bibliothèques Angular.
+- **Angular CLI** (v15 ou supérieur) : Outil en ligne de commande pour créer, développer et déployer des applications Angular.
+- **Navigateur moderne** : Chrome, Firefox ou Edge pour garantir une compatibilité optimale avec les technologies modernes utilisées dans le frontend.
 
 ---
 
@@ -143,6 +160,32 @@ Avant de cloner et exécuter le projet, assurez-vous d'avoir installé :
 2. Lancer le serveur de développement Angular :
    ```bash
    ng serve
+3. **Accéder à l'application Angular** :
+    - L'application lancée avec Angular sera disponible à l'adresse suivante :
+        - [`http://localhost:4200`](http://localhost:4200) (serveur de développement Angular).
+        - Pour tester l'intégration complète avec le backend sécurisé, accédez à :
+          [`https://localhost:8443`](https://localhost:8443) (nécessite HTTPS activé et configuration backend prête).
+> **Note** : Assurez-vous que le backend Spring Boot est en cours d'exécution pour bénéficier de toutes les fonctionnalités intégrées.
+
+### Aperçu des Interfaces Utilisateur
+
+1. **Interface principale**  
+   ![Interface principale](asset/interface1n.png)  
+   L'écran d'accueil avec les informations du médecin et l'interface de réservation.
+
+2. **Autocomplétion des services**  
+   ![Autocomplétion](asset/interface2n.png)  
+   Une fonctionnalité dynamique pour suggérer automatiquement les spécialités disponibles.
+
+3. **Réservation validée**  
+   ![Réservation](asset/interface3n.png)  
+   Une fois la réservation réussie, un récapitulatif est affiché, comprenant l'hôpital attribué et le délai estimé.
+
+4. **Gestion des erreurs**  
+   ![Gestion des erreurs](asset/interface4n.png)  
+   Lorsqu'une spécialité est invalide ou non disponible, l'application propose une option de réservation en urgence générale.
+
+
 ### Base de Données 
 
 Pour cette PoC, il est possible d'utiliser des données en mémoire pour simuler les hôpitaux et les réservations.
@@ -179,7 +222,16 @@ Pour cette PoC, il est possible d'utiliser des données en mémoire pour simuler
 ![Tests JMeter](asset/200ms800s.png)
 
 ![Tests JMeter](asset/kpi.png)
-5. **Exécution du Pipeline CI/CD :** 
+
+5. **Tests Frontend :**
+   - Pour exécuter les tests frontend, utilisez la commande suivante dans le répertoire Angular (`src/main/angular`) :
+    ```bash
+    ng test --code-coverage
+![Coverage](asset/iutest.png)   
+
+![Listingtest](asset/iutest2.png)
+
+6. **Exécution du Pipeline CI/CD :** 
    - Utilisez Jenkins pour automatiser les tests et le déploiement continu.
 
 ## Déploiement
@@ -192,14 +244,43 @@ Voici les étapes pour déployer l'application en production (pour une applicati
    - Fournir les certificats nécessaires (comme keystore.p12) pour activer HTTPS en production.
 3. **Configuration** :
    - S'assurer que l'environnement respecte les configurations de sécurité mentionnées dans **`application.properties`**.
-   
+
 ## Technologies Utilisées
 
-- **Outils de développement:** **`Maven`**, **`Git`**,**`Postman`**.
-- **Backend** : **`Java 21`**, **`Spring Boot`**.
-- **Frontend** : **`Angular`**.
-- **CI/CD** : **`Jenkins`**.
-- **Tests** : **`JUnit 5`**, **`Mockito`** , **`Jacoco (couverture)`**, **`MockMvc`**, **`JMeter`**.
+### **Outils de Développement**
+- **Maven** : Gestion des dépendances et automatisation des tâches pour le backend.
+- **Git** : Contrôle de version pour la gestion des modifications du code source.
+- **Postman** : Test manuel et validation des endpoints REST.
+- **Node.js et npm** : Gestion des dépendances et exécution des scripts pour le frontend Angular.
+
+### **Backend**
+- **Java 21** : Langage principal pour l'implémentation des services backend.
+- **Spring Boot** : Framework pour construire des applications RESTful robustes et extensibles.
+- **Spring Data JPA** : Pour les interactions avec la base de données simulées dans ce PoC.
+- **SpringDoc OpenAPI** : Génération et documentation des endpoints REST avec Swagger.
+
+### **Frontend**
+- **Angular 16** : Framework pour la création d'une interface utilisateur moderne, dynamique et responsive.
+    - **Karma** : Outil de test pour exécuter les tests Angular dans différents navigateurs
+    - **Jasmine** : Framework de test pour écrire les tests unitaires et d'intégration en TypeScript.
+    - **SCSS** : Préprocesseur CSS pour la gestion des styles visuels.
+    - **Angular CLI** : Outil pour la configuration, le développement et la compilation des projets Angular.
+- **TypeScript** : Langage principal pour la logique frontend, offrant des fonctionnalités de typage statique.
+
+### **CI/CD**
+- **Jenkins** : Intégration continue et déploiement automatisé, avec pipelines configurés pour les tests et le déploiement.
+
+### **Tests**
+- **JUnit 5** : Framework principal pour les tests unitaires.
+- **Mockito** : Outil de mocking pour simuler les dépendances dans les tests.
+- **Jacoco** : Génération de rapports de couverture de tests.
+- **MockMvc** : Simulation des requêtes HTTP pour les tests d'intégration.
+- **JMeter** : Tests de performance pour mesurer les temps de réponse et la robustesse de l'application sous charge.
+
+### **Autres outils et bibliothèques**
+- **Swagger UI** : Interface utilisateur pour tester et documenter les endpoints REST.
+- **ConcurrentHashMap** : Pour implémenter un cache concurrent dans le backend.
+- **Keystore et certificats auto-signés** : Configuration HTTPS pour sécuriser les échanges avec l'API.
 
 ## Contribution
 

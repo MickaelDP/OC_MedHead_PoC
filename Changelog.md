@@ -1,5 +1,148 @@
 # Changelog
 
+
+## [v0.102] - Couverture des tests et validation du frontend Angular
+
+### **Ajouts**
+
+#### **Tests unitaires et d'intégration frontend**
+- Ajout de tests unitaires et d'intégration pour améliorer la robustesse et la couverture du code :
+  - **ReservationComponent** :
+    - Validation des soumissions de formulaire valides avec des spécialités existantes.
+    - Gestion des cas de spécialités invalides avec affichage du popup d’urgence.
+    - Simulation de la fermeture du popup et réinitialisation des champs du formulaire.
+    - Gestion des erreurs réseau simulées avec des espions sur `fetch` :
+      - Vérification des erreurs de type `Network Error`.
+      - Gestion des réponses inattendues comme `404` et JSON mal formaté.
+    - Réservation d'urgence : simulation du cas où l'utilisateur réserve après une spécialité invalide.
+    - Tests de capitalisation correcte des spécialités (e.g., `"médecine générale"` devient `"Médecine générale"`).
+  - **AppComponent** :
+    - Vérification de la création de l'application Angular.
+    - Validation des redirections des routes :
+      - Redirection des chemins vides vers `/reservation`.
+      - Gestion des routes inconnues avec redirection vers `/home`.
+    - Tests de navigation entre `/reservation` et `/home` pour s'assurer du bon fonctionnement des routes.
+
+#### **Commandes de tests**
+- Ajout de la commande `ng test --code-coverage` pour exécuter les tests avec un rapport de couverture.
+
+#### **Couverture du code**
+- Amélioration significative de la couverture des tests :
+  - **Statements** : 82.53% (52/63)
+  - **Branches** : 63.63% (7/11)
+  - **Functions** : 95.23% (20/21)
+  - **Lines** : 81.96% (50/61)
+
+---
+
+### **Correctifs**
+
+- **Gestion des cas d’erreur** :
+  - Vérification et gestion des erreurs réseau (`fetch`) :
+    - Ajout d'alertes et de messages d'erreur pour notifier les utilisateurs en cas de problème de connexion.
+    - Réinitialisation de l'état en cas d'erreur lors de la réservation.
+  - Meilleure gestion des JSON mal formatés ou des réponses inattendues du backend.
+
+- **Refactorisation des tests** :
+  - Simplification et uniformisation des tests pour éviter les répétitions inutiles.
+  - Ajout de commentaires explicatifs dans les fichiers de tests pour en faciliter la maintenance.
+
+---
+
+### **Statut**
+
+#### **Stabilité**
+- La version v0.102 est stable avec une couverture de tests élevée.
+- Le frontend Angular est robuste et bien testé, prêt pour une intégration complète avec le backend.
+
+#### **Prochaine étape**
+- Développement des tests supplémentaires pour des cas métier complexes si nécessaire.
+- Optimisation des performances et des tests avant déploiement en production.
+
+---
+
+## [v0.101-] - Implémentation initiale du frontend Angular
+
+### **Frontend Angular**
+
+- **Création du projet Angular** :
+  - Mise en place d'un projet Angular standalone pour la gestion du frontend.
+  - Implémentation des composants principaux :
+    - `ReservationComponent` : Permet la saisie des informations utilisateur et la gestion des réservations.
+
+- **Fonctionnalités principales** :
+  - **Formulaire interactif** :
+    - Champ d'entrée pour saisir une spécialité avec autocomplétion dynamique.
+    - Gestion des suggestions basées sur un fichier JSON de spécialités.
+    - Validation des entrées utilisateur avec messages d'erreur.
+  - **Popups contextuels** :
+    - Popup de confirmation de réservation avec les détails envoyés à l'API backend.
+    - Popup d'urgence pour gérer les cas de spécialités invalides ou inconnues :
+      - Proposition de réserver en "Médecine d'urgence".
+  - **Interactions utilisateur** :
+    - Boutons interactifs avec hover pour une meilleure expérience utilisateur.
+    - Gestion des états du formulaire : désactivation en cas de popups actifs.
+
+- **Intégration API** :
+  - Envoi des données utilisateur au backend via des requêtes **fetch**.
+  - Gestion des réponses et affichage dynamique dans le popup de confirmation.
+
+- **Design et expérience utilisateur** :
+  - Mise en place d'un design moderne avec **SCSS** :
+    - Utilisation de dégradés pour le fond.
+    - Boutons cohérents avec le thème principal.
+    - Style des suggestions et des popups pour une meilleure lisibilité.
+  - Overlay pour bloquer les interactions avec le reste de la page en cas de popup actif.
+
+- **Tests et validation** :
+  - Fonctionnalité testée en environnement de développement local avec interactions simulées manuellement.
+  - Prêt pour intégration avec le backend.
+
+### **Statut**
+
+- **Stabilité** :
+  - Le frontend est stable et prêt pour des interactions complètes avec le backend.
+- **Prochaine étape** :
+  - Optimisations du frontend basées sur les retours utilisateurs et intégration avec des tests automatisés.
+
+---
+
+## [v0.1] - Backend finalisé sur la branche `main`
+
+### **Finalisation Backend**
+
+- **Implémentation complète** :
+  - Le backend est finalisé avec tous les services critiques et endpoints REST fonctionnels :
+    - Gestion des patients, hôpitaux et résultats via les services correspondants.
+  - Simulation complète des flux API :
+    - Recherche des hôpitaux par spécialité.
+    - Attribution des patients à un hôpital.
+    - Réservation et décrémentation des lits disponibles.
+
+- **Refactorisation et standardisation** :
+  - Adoption des conventions Spring pour une meilleure lisibilité et maintenabilité.
+  - Utilisation des UUIDs pour garantir l'unicité globale des entités.
+  - Gestion centralisée des exceptions avec un `ControllerAdvice`.
+
+- **Tests complets** :
+  - Tests unitaires et d'intégration couvrant les entités, services, et contrôleurs.
+  - Couverture de code élevée confirmée avec Jacoco.
+
+- **Documentation** :
+  - Documentation complète de l'API avec **Swagger**.
+  - Export des collections Postman pour simplifier les tests API.
+
+### **Statut**
+
+- **Stabilité** :
+  - Le backend atteint une maturité suffisante pour être utilisé en production simulée.
+  - Tous les tests passent avec succès, garantissant robustesse et conformité.
+
+- **Prochaine étape** :
+  - Intégration avec le frontend Angular pour une solution complète.
+
+---
+
 ## [v0.005] - Optimisation des performances et robustesse du backend
 
 ### **Optimisations fonctionnelles**
@@ -43,6 +186,7 @@
   - Le backend atteint une stabilité suffisante pour les scénarios de production simulés.
   - Tous les tests passent avec succès, garantissant un comportement conforme aux attentes.
 
+---
 
 ## [v0.004] - Sécurisation et documentation avec HTTPS & Swagger
 
@@ -94,6 +238,8 @@
 
 - **Couverture** :
   - Les modifications liées à HTTPS et Swagger n'ont pas affecté la couverture de code.
+
+---
 
 ## [v0.003] - Refactorisation et Adoption des Standards Spring
 
@@ -152,6 +298,8 @@
   - Tous les tests unitaires et d'intégration passent avec succès.
   - Couverture confirmée à 94 % avec Jacoco.
 
+---
+
 ## [v0.002]
 ### Ajouts
 - Implémentation des tests unitaires pour les entités `Patient`, `Hopital`, et `Result` avec JUnit 5.
@@ -176,6 +324,8 @@
 ### Statut
 - Couverture des tests validée pour toutes les entités et services à ce stade.
 - Tous les tests unitaires passent avec succès pour les entités et services.
+
+---
 
 ## [v0.001] -Functionnal backend with REST endpoints and initial test runner
 
