@@ -1,5 +1,87 @@
 # Changelog
 
+## [v0.101] - Implémentation initiale du frontend Angular
+
+### **Frontend Angular**
+
+- **Création du projet Angular** :
+  - Mise en place d'un projet Angular standalone pour la gestion du frontend.
+  - Implémentation des composants principaux :
+    - `ReservationComponent` : Permet la saisie des informations utilisateur et la gestion des réservations.
+
+- **Fonctionnalités principales** :
+  - **Formulaire interactif** :
+    - Champ d'entrée pour saisir une spécialité avec autocomplétion dynamique.
+    - Gestion des suggestions basées sur un fichier JSON de spécialités.
+    - Validation des entrées utilisateur avec messages d'erreur.
+  - **Popups contextuels** :
+    - Popup de confirmation de réservation avec les détails envoyés à l'API backend.
+    - Popup d'urgence pour gérer les cas de spécialités invalides ou inconnues :
+      - Proposition de réserver en "Médecine d'urgence".
+  - **Interactions utilisateur** :
+    - Boutons interactifs avec hover pour une meilleure expérience utilisateur.
+    - Gestion des états du formulaire : désactivation en cas de popups actifs.
+
+- **Intégration API** :
+  - Envoi des données utilisateur au backend via des requêtes **fetch**.
+  - Gestion des réponses et affichage dynamique dans le popup de confirmation.
+
+- **Design et expérience utilisateur** :
+  - Mise en place d'un design moderne avec **SCSS** :
+    - Utilisation de dégradés pour le fond.
+    - Boutons cohérents avec le thème principal.
+    - Style des suggestions et des popups pour une meilleure lisibilité.
+  - Overlay pour bloquer les interactions avec le reste de la page en cas de popup actif.
+
+- **Tests et validation** :
+  - Fonctionnalité testée en environnement de développement local avec interactions simulées manuellement.
+  - Prêt pour intégration avec le backend.
+
+### **Statut**
+
+- **Stabilité** :
+  - Le frontend est stable et prêt pour des interactions complètes avec le backend.
+- **Prochaine étape** :
+  - Optimisations du frontend basées sur les retours utilisateurs et intégration avec des tests automatisés.
+
+---
+
+## [v0.1] - Backend finalisé sur la branche `main`
+
+### **Finalisation Backend**
+
+- **Implémentation complète** :
+  - Le backend est finalisé avec tous les services critiques et endpoints REST fonctionnels :
+    - Gestion des patients, hôpitaux et résultats via les services correspondants.
+  - Simulation complète des flux API :
+    - Recherche des hôpitaux par spécialité.
+    - Attribution des patients à un hôpital.
+    - Réservation et décrémentation des lits disponibles.
+
+- **Refactorisation et standardisation** :
+  - Adoption des conventions Spring pour une meilleure lisibilité et maintenabilité.
+  - Utilisation des UUIDs pour garantir l'unicité globale des entités.
+  - Gestion centralisée des exceptions avec un `ControllerAdvice`.
+
+- **Tests complets** :
+  - Tests unitaires et d'intégration couvrant les entités, services, et contrôleurs.
+  - Couverture de code élevée confirmée avec Jacoco.
+
+- **Documentation** :
+  - Documentation complète de l'API avec **Swagger**.
+  - Export des collections Postman pour simplifier les tests API.
+
+### **Statut**
+
+- **Stabilité** :
+  - Le backend atteint une maturité suffisante pour être utilisé en production simulée.
+  - Tous les tests passent avec succès, garantissant robustesse et conformité.
+
+- **Prochaine étape** :
+  - Intégration avec le frontend Angular pour une solution complète.
+
+---
+
 ## [v0.005] - Optimisation des performances et robustesse du backend
 
 ### **Optimisations fonctionnelles**
@@ -43,6 +125,7 @@
   - Le backend atteint une stabilité suffisante pour les scénarios de production simulés.
   - Tous les tests passent avec succès, garantissant un comportement conforme aux attentes.
 
+---
 
 ## [v0.004] - Sécurisation et documentation avec HTTPS & Swagger
 
@@ -94,6 +177,8 @@
 
 - **Couverture** :
   - Les modifications liées à HTTPS et Swagger n'ont pas affecté la couverture de code.
+
+---
 
 ## [v0.003] - Refactorisation et Adoption des Standards Spring
 
@@ -152,6 +237,8 @@
   - Tous les tests unitaires et d'intégration passent avec succès.
   - Couverture confirmée à 94 % avec Jacoco.
 
+---
+
 ## [v0.002]
 ### Ajouts
 - Implémentation des tests unitaires pour les entités `Patient`, `Hopital`, et `Result` avec JUnit 5.
@@ -176,6 +263,8 @@
 ### Statut
 - Couverture des tests validée pour toutes les entités et services à ce stade.
 - Tous les tests unitaires passent avec succès pour les entités et services.
+
+---
 
 ## [v0.001] -Functionnal backend with REST endpoints and initial test runner
 

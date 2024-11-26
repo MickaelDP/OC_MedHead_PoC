@@ -1,0 +1,59 @@
+<div>
+  <header>
+    <h1>Bienvenue sur MedHead</h1> <br>
+    <p>Bonjour {{ qualite }} {{ nom }}</p>
+    <p>Latitude: {{ latitude }} | Longitude: {{ longitude }}</p> <br>
+  </header>
+
+  <!-- Formulaire -->
+  <form (ngSubmit)="submitForm()" class="form-container" [class.disabled]="reservationResponse">
+    <input
+      type="text"
+      [(ngModel)]="specialite"
+      name="specialite"
+      (input)="onSpecialityInput(specialite)"
+      placeholder="Entrez la spécialité"
+      autocomplete="off"
+      required
+    />
+    <ul class="suggestions" *ngIf="filteredSpecialities.length">
+      <li
+        *ngFor="let speciality of filteredSpecialities"
+        (click)="selectSpeciality(speciality)"
+      >
+        {{ speciality }}
+      </li>
+    </ul>
+    <button type="submit">Réserver</button>
+  </form>
+
+  <br> <br> <p>Réservez un lit hospitalier en quelques clics.</p>
+
+  <!-- Overlay -->
+  <div class="overlay" *ngIf="reservationResponse || showUrgencyPopup"></div>
+
+  <!-- Pop-up affichant la réponse -->
+  <div class="popup" *ngIf="reservationResponse">
+    <h2>Réservation</h2>
+    <p><strong>ID :</strong> {{ reservationResponse.id }}</p>
+    <p><strong>Hôpital :</strong> {{ reservationResponse.hopitalNom }}</p>
+    <p><strong>Délai :</strong> {{ reservationResponse.delai }} minutes</p>
+    <p>
+      <strong>La spécialité est disponible :</strong>
+      {{ reservationResponse.specialiteDisponible ? 'Oui' : 'Non' }}
+    </p>
+    <button (click)="closePopup()">OK</button>
+  </div>
+
+  <!-- Popup d'urgence -->
+  <div class="popup" *ngIf="showUrgencyPopup">
+    <h2>Spécialité Invalide</h2>
+    <p>Cette spécialité n'existe pas. Voulez-vous réserver en urgence générale ?</p>
+    <div class="popup-buttons">
+      <button (click)="closeUrgencyPopup()">Annuler</button>
+      <button (click)="reserveInUrgency()">Réserver</button>
+    </div>
+  </div>
+
+  <footer>© 2024 MedHead - Tous droits réservés</footer>
+</div>
