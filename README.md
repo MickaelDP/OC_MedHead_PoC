@@ -2,7 +2,7 @@
 ![Couverture du projet](asset/cover.png)
 
 ### **MedHead - Gestion des réservations hospitalières**
-**Version actuelle :** v0.101  
+**Version actuelle :** v0.102  
 **Statut du projet :** Fonctionnel, prêt pour intégration et tests utilisateurs.
 ---
 
@@ -32,7 +32,7 @@ Ce projet est un Proof of Concept (PoC) visant à démontrer la faisabilité d'u
 
 
 L'architecture du backend est basée sur **Spring Boot**. Les tests unitaires et d'intégration sont réalisés avec **JUnit** et **Mockito**. La documentation de l'API est disponible grâce à **Swagger**.
-Le frontend est développé en **Angular**, utilisant des outils modernes pour une expérience utilisateur fluide et interactive :
+Le frontend est développé en **Angular**, utilisant des outils modernes pour une expérience utilisateur fluide et interactive, avec des tests automatisés réalisés via **Karma** et **Jasmine**.
 
 > **Lien vers la documentation d'architecture associée :**  
 > [OC_MedHead_ArchitecturalDocs](https://github.com/MickaelDP/OC_MedHead_ArchitecturalDocs)
@@ -57,6 +57,7 @@ Le frontend est développé en **Angular**, utilisant des outils modernes pour u
         - **`reservation.component.scss`** : Fichier SCSS pour le style visuel.
         - **`reservation.component.spec.ts`** : Fichier de test pour valider les comportements du composant.
         - **`reservation.component.ts`** : Logique principale du composant Angular.
+    - **`app.component.spec`** : Fichier de test pour valider les comportements du composant.
 - **`src/main/ressources/static`**:
     - Contient les fichiers HTML et CSS pré-rendus pour simuler une version statique ou fallback de l'interface Angular :
         - **`index.html`** : Page principale de l'interface.
@@ -169,19 +170,19 @@ Avant de cloner et exécuter le projet, assurez-vous d'avoir installé :
 ### Aperçu des Interfaces Utilisateur
 
 1. **Interface principale**  
-   ![Interface principale](asset/interface1.png)  
+   ![Interface principale](asset/interface1n.png)  
    L'écran d'accueil avec les informations du médecin et l'interface de réservation.
 
 2. **Autocomplétion des services**  
-   ![Autocomplétion](asset/interface2.png)  
+   ![Autocomplétion](asset/interface2n.png)  
    Une fonctionnalité dynamique pour suggérer automatiquement les spécialités disponibles.
 
 3. **Réservation validée**  
-   ![Réservation](asset/interface3.png)  
+   ![Réservation](asset/interface3n.png)  
    Une fois la réservation réussie, un récapitulatif est affiché, comprenant l'hôpital attribué et le délai estimé.
 
 4. **Gestion des erreurs**  
-   ![Gestion des erreurs](asset/interface4.png)  
+   ![Gestion des erreurs](asset/interface4n.png)  
    Lorsqu'une spécialité est invalide ou non disponible, l'application propose une option de réservation en urgence générale.
 
 
@@ -221,7 +222,16 @@ Pour cette PoC, il est possible d'utiliser des données en mémoire pour simuler
 ![Tests JMeter](asset/200ms800s.png)
 
 ![Tests JMeter](asset/kpi.png)
-5. **Exécution du Pipeline CI/CD :** 
+
+5. **Tests Frontend :**
+   - Pour exécuter les tests frontend, utilisez la commande suivante dans le répertoire Angular (`src/main/angular`) :
+    ```bash
+    ng test --code-coverage
+![Coverage](asset/iutest.png)   
+
+![Listingtest](asset/iutest2.png)
+
+6. **Exécution du Pipeline CI/CD :** 
    - Utilisez Jenkins pour automatiser les tests et le déploiement continu.
 
 ## Déploiement
@@ -251,6 +261,8 @@ Voici les étapes pour déployer l'application en production (pour une applicati
 
 ### **Frontend**
 - **Angular 16** : Framework pour la création d'une interface utilisateur moderne, dynamique et responsive.
+    - **Karma** : Outil de test pour exécuter les tests Angular dans différents navigateurs
+    - **Jasmine** : Framework de test pour écrire les tests unitaires et d'intégration en TypeScript.
     - **SCSS** : Préprocesseur CSS pour la gestion des styles visuels.
     - **Angular CLI** : Outil pour la configuration, le développement et la compilation des projets Angular.
 - **TypeScript** : Langage principal pour la logique frontend, offrant des fonctionnalités de typage statique.

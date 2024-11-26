@@ -6,24 +6,24 @@ import { FormsModule } from '@angular/forms';
 import specialitiesData from '../../assets/specialities.json';
 
 @Component({
-  selector: 'app-reservation',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './reservation.component.html',
-  styleUrls: ['./reservation.component.scss'],
+selector: 'app-reservation',
+standalone: true,
+imports: [CommonModule, FormsModule],
+templateUrl: './reservation.component.html',
+styleUrls: ['./reservation.component.scss'],
 })
 export class ReservationComponent {
-  qualite: string = 'Dr.';
-  nom: string = 'Frank Estein';
-  latitude: number = 48.8566;
-  longitude: number = 2.3522;
-  specialite: string = '';                                    // Spécialité entrée par l'utilisateur
-  reservationResponse: any = null;                            // Réponse de l'API
-  specialities: string[] = [];                                // Liste des spécialités disponibles
-  filteredSpecialities: string[] = [];
-  showUrgencyPopup: boolean = false;                          // Indique si le popup d'urgence est affiché
+qualite: string = 'Dr.';
+nom: string = 'Frank Estein';
+latitude: number = 48.8566;
+longitude: number = 2.3522;
+specialite: string = '';                                    // Spécialité entrée par l'utilisateur
+reservationResponse: any = null;                            // Réponse de l'API
+specialities: string[] = [];                                // Liste des spécialités disponibles
+filteredSpecialities: string[] = [];
+showUrgencyPopup: boolean = false;                          // Indique si le popup d'urgence est affiché
 
-  constructor() {
+constructor() {
     // Charger les spécialités au moment de l'initialisation
     this.loadSpecialities();
   }

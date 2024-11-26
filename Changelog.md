@@ -1,6 +1,67 @@
 # Changelog
 
-## [v0.101] - Implémentation initiale du frontend Angular
+
+## [v0.102] - Couverture des tests et validation du frontend Angular
+
+### **Ajouts**
+
+#### **Tests unitaires et d'intégration frontend**
+- Ajout de tests unitaires et d'intégration pour améliorer la robustesse et la couverture du code :
+  - **ReservationComponent** :
+    - Validation des soumissions de formulaire valides avec des spécialités existantes.
+    - Gestion des cas de spécialités invalides avec affichage du popup d’urgence.
+    - Simulation de la fermeture du popup et réinitialisation des champs du formulaire.
+    - Gestion des erreurs réseau simulées avec des espions sur `fetch` :
+      - Vérification des erreurs de type `Network Error`.
+      - Gestion des réponses inattendues comme `404` et JSON mal formaté.
+    - Réservation d'urgence : simulation du cas où l'utilisateur réserve après une spécialité invalide.
+    - Tests de capitalisation correcte des spécialités (e.g., `"médecine générale"` devient `"Médecine générale"`).
+  - **AppComponent** :
+    - Vérification de la création de l'application Angular.
+    - Validation des redirections des routes :
+      - Redirection des chemins vides vers `/reservation`.
+      - Gestion des routes inconnues avec redirection vers `/home`.
+    - Tests de navigation entre `/reservation` et `/home` pour s'assurer du bon fonctionnement des routes.
+
+#### **Commandes de tests**
+- Ajout de la commande `ng test --code-coverage` pour exécuter les tests avec un rapport de couverture.
+
+#### **Couverture du code**
+- Amélioration significative de la couverture des tests :
+  - **Statements** : 82.53% (52/63)
+  - **Branches** : 63.63% (7/11)
+  - **Functions** : 95.23% (20/21)
+  - **Lines** : 81.96% (50/61)
+
+---
+
+### **Correctifs**
+
+- **Gestion des cas d’erreur** :
+  - Vérification et gestion des erreurs réseau (`fetch`) :
+    - Ajout d'alertes et de messages d'erreur pour notifier les utilisateurs en cas de problème de connexion.
+    - Réinitialisation de l'état en cas d'erreur lors de la réservation.
+  - Meilleure gestion des JSON mal formatés ou des réponses inattendues du backend.
+
+- **Refactorisation des tests** :
+  - Simplification et uniformisation des tests pour éviter les répétitions inutiles.
+  - Ajout de commentaires explicatifs dans les fichiers de tests pour en faciliter la maintenance.
+
+---
+
+### **Statut**
+
+#### **Stabilité**
+- La version v0.102 est stable avec une couverture de tests élevée.
+- Le frontend Angular est robuste et bien testé, prêt pour une intégration complète avec le backend.
+
+#### **Prochaine étape**
+- Développement des tests supplémentaires pour des cas métier complexes si nécessaire.
+- Optimisation des performances et des tests avant déploiement en production.
+
+---
+
+## [v0.101-] - Implémentation initiale du frontend Angular
 
 ### **Frontend Angular**
 

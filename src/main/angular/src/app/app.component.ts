@@ -7,4 +7,6 @@ standalone: true,
 imports: [RouterModule], // Si vous utilisez des routes
 template: `<router-outlet></router-outlet>` // Permet de charger les composants en fonction des routes
 })
-export class AppComponent {}
+export class AppComponent {
+title = 'angular-frontend';
+}
