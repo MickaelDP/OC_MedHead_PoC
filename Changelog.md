@@ -1,5 +1,21 @@
-# Changelog
+# Changelog_
+## [v0.201] - Initialisation du pipeline CI/CD
 
+### **Ajouts**
+
+#### **Configuration du pipeline CI/CD**
+- Création d'un fichier **ci-cd.yml** pour la mise en place d'un pipeline CI/CD automatisé via GitHub Actions.
+- Automatisation des étapes suivantes dans le pipeline :
+  - **Build Backend** : Compilation du projet backend Maven avec tests unitaires.
+  - **Build Frontend** : Construction de l'application Angular avec exécution des tests.
+  - **Déploiement Docker** (préparation pour future intégration).
+- Validation automatique des commits poussés sur la branche `dev`.
+
+#### **Documentation**
+- Inclusion des fichiers `.github/workflows/CiCd.yml` dans le dépôt avec une explication succincte des étapes de configuration.
+
+---
+---
 
 ## [v0.102] - Couverture des tests et validation du frontend Angular
 

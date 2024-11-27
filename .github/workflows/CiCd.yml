@@ -1,0 +1,38 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.11.1' # Node.js version compatible avec Angular
+
+      - name: Install and Build Angular
+        run: |
+          cd src/main/angular
+          npm install
+          npm run build
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '22'
+
+      - name: Build and Test Backend
+        run: mvn clean install
+
+      - name: Generate JaCoCo Test Coverage Report
+        run: mvn verify
