@@ -237,13 +237,14 @@ Pour cette PoC, il est possible d'utiliser des données en mémoire pour simuler
 
 ## Déploiement
 
-Voici les étapes pour déployer l'application en production (pour une application complète, ces étapes peuvent varier) :
+Voici les étapes pour déployer l'application en production :
 
 1. **Backend** : Utiliser Maven pour packager l'application :
     ```bash 
     mvn package
    
 Le fichier JAR sera généré dans le répertoire `target`.
+
 2. **Frontend** :  Compiler l'application Angular :
     ```bash 
     ng build --prod
