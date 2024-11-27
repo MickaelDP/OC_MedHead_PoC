@@ -227,6 +227,7 @@ Pour cette PoC, il est possible d'utiliser des données en mémoire pour simuler
    - Pour exécuter les tests frontend, utilisez la commande suivante dans le répertoire Angular (`src/main/angular`) :
     ```bash
     ng test --code-coverage
+   
 ![Coverage](asset/iutest.png)   
 
 ![Listingtest](asset/iutest2.png)
@@ -244,8 +245,10 @@ Voici les étapes pour déployer l'application en production (pour une applicati
    
 Le fichier JAR sera généré dans le répertoire `target`.
 2. **Frontend** :  Compiler l'application Angular :
-   ```bash 
+    ```bash 
     ng build --prod
+  
+ 
 3. **Intégration Backend/Frontend** :Déployer les fichiers compilés d'Angular dans le répertoire static de `Spring Boot`.
 
 ---
