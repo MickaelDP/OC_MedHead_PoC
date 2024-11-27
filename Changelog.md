@@ -1,4 +1,16 @@
-# Changelog_
+# Changelog
+
+## [v1.0.0] - Proof of Concept (PoC) Opérationnel
+
+Cette version marque la finalisation et l'opérationnalité complète du PoC pour l'application de réservation de lits hospitaliers. Elle inclut toutes les fonctionnalités principales, un frontend Angular entièrement fonctionnel, un backend Spring Boot robuste, ainsi qu'une intégration complète de la CI/CD pour assurer le suivi des tests et des déploiements.
+
+### **Nouveautés**
+- CI/CD avec GitHub Actions :
+
+  - **Automatisation complète du build, des tests, et de la génération des rapports de couverture de code.**
+  - **Détection des erreurs de build et tests échoués dans le pipeline.**
+---
+
 ## [v0.201] - Initialisation du pipeline CI/CD
 
 ### **Ajouts**

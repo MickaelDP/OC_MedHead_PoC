@@ -2,7 +2,7 @@
 ![Couverture du projet](asset/cover.png)
 
 ### **MedHead - Gestion des réservations hospitalières**
-**Version actuelle :** v0.102  
+**Version actuelle :** v1.0.0  
 **Statut du projet :** Fonctionnel, prêt pour intégration et tests utilisateurs.
 ---
 
@@ -238,12 +238,29 @@ Pour cette PoC, il est possible d'utiliser des données en mémoire pour simuler
 
 Voici les étapes pour déployer l'application en production (pour une application complète, ces étapes peuvent varier) :
 
-1. **Pipeline CI/CD** :
-   - Configuration dans Jenkins pour le déploiement continu. Voir le fichier Jenkinsfile dans le dépôt pour les détails.
-2. **HTTPS** :
-   - Fournir les certificats nécessaires (comme keystore.p12) pour activer HTTPS en production.
-3. **Configuration** :
-   - S'assurer que l'environnement respecte les configurations de sécurité mentionnées dans **`application.properties`**.
+1. **Backend** : Utiliser Maven pour packager l'application :
+    ```bash 
+    mvn package
+   
+Le fichier JAR sera généré dans le répertoire `target`.
+2. **Frontend** :  Compiler l'application Angular :
+   ```bash 
+    ng build --prod
+3. **Intégration Backend/Frontend** :Déployer les fichiers compilés d'Angular dans le répertoire static de `Spring Boot`.
+
+---
+## CI/CD avec GitHub Actions
+
+### **Configuration**
+Le projet utilise GitHub Actions pour automatiser les builds, les tests, et la génération des rapports de couverture.
+Pipeline CI/CD (`.github/workflows/CiCd.yml`)
+ - **Étapes principales** :
+     - **Build du Frontend** : Compilation Angular.
+     - **Tests et Couverture** : Exécution des tests backend (JUnit, JaCoCo) et frontend (Karma, Jasmine).
+     - **Validation** : Vérification des builds réussis avant déploiement.
+
+![Pipeline CICD](asset/cicd.png)
+
 
 ## Technologies Utilisées
 
@@ -268,7 +285,7 @@ Voici les étapes pour déployer l'application en production (pour une applicati
 - **TypeScript** : Langage principal pour la logique frontend, offrant des fonctionnalités de typage statique.
 
 ### **CI/CD**
-- **Jenkins** : Intégration continue et déploiement automatisé, avec pipelines configurés pour les tests et le déploiement.
+- **GitHub Actions** : Intégration continue et déploiement automatisé, avec pipelines configurés pour les tests et le déploiement.
 
 ### **Tests**
 - **JUnit 5** : Framework principal pour les tests unitaires.
