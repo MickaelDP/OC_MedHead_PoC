@@ -1,4 +1,22 @@
 # Changelog
+## [v1.0.2] - Implémentation du multithreading et améliorations diverses
+
+Cette version introduit des améliorations majeures en termes de performance grâce à l'implémentation du multithreading pour le calcul des délais de trajets, permettant ainsi d'optimiser les performances lors des requêtes externes, telles que celles envoyées au service GPS. De plus, diverses optimisations ont été apportées pour améliorer la stabilité et l'efficacité du processus global.
+
+### **Nouveautés**
+
+#### **Implémentation du Multithreading**
+- **Optimisation des calculs de délais** :
+  - Introduction d’un **thread pool** pour exécuter de manière parallèle le calcul des délais entre le patient et les hôpitaux.
+  - Chaque tâche est soumise à un **ExecutorService** pour effectuer les calculs de distance de manière asynchrone, réduisant le temps de traitement global des demandes.
+  - Utilisation de **Future<Void>** pour gérer le retour des tâches et garantir que toutes les tâches sont complètes avant de finaliser le processus.
+  - Ajout d'un mécanisme pour attendre la fin de toutes les tâches avant de libérer le thread pool et de terminer le parcours.
+
+#### **Optimisation des Performances**
+- **Amélioration de la gestion des threads** :
+  - Utilisation d'un **FixedThreadPool** avec un nombre fixe de threads pour exécuter simultanément les tâches et éviter la surcharge du système.
+  - Le pool de threads est désormais correctement géré avec une fermeture explicite après l'exécution de toutes les tâches, garantissant ainsi une utilisation optimale des ressources système.
+
 ## [v1.0.1] - Correction et amélioration de l'intégration CI/CD et des tokens JWT et CSRF
 
 Cette version apporte des ajustements importants à l'intégration des tokens JWT et CSRF ainsi qu'à l'amélioration de l'utilisation du pipeline CI/CD pour l'application de réservation de lits hospitaliers. Elle vise à renforcer la sécurité des échanges via des tokens et à mieux séparer les étapes de build et de test dans le processus d'intégration continue.

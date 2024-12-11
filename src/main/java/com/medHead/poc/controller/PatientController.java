@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.*;
 
 /**
  * Contrôleur REST pour la gestion des patients (CRUD).
@@ -123,14 +125,34 @@ public class PatientController {
             }
 
             // 3. Calculer les delais pour chaque hopital
-            for (Hopital hopital : hopitaux) {
-                int delai = gpsService.getTravelDelay(
-                        patient.getLatitude(),
-                        patient.getLongitude(),
-                        hopital.getLatitude(),
-                        hopital.getLongitude()
-                );
-                hopital.setDelai(delai);
+            // Créer un thread pool avec un nombre fixe de threads
+            int nThreads = 10;
+            try (ExecutorService executorService = Executors.newFixedThreadPool(nThreads)) {
+                List<Future<Void>> futures = new ArrayList<>();
+                // Soumettre chaque tâche de calcul dans le pool
+                for (Hopital hopital : hopitaux) {
+                    final Patient localPatient = patient;
+                    futures.add(executorService.submit(() -> {
+                        try {
+                            int delai = gpsService.getTravelDelay(
+                                    localPatient.getLatitude(),
+                                    localPatient.getLongitude(),
+                                    hopital.getLatitude(),
+                                    hopital.getLongitude()
+                            );
+                            hopital.setDelai(delai);
+                        } catch (Exception e) {
+                            e.printStackTrace();  // Afficher l'erreur dans les logs
+                        }
+                        return null; // Nous retournons null car il s'agit d'une tâche void
+                    }));
+                }
+                // Attendre que toutes les tâches soient terminées
+                for (Future<Void> future : futures) {
+                    future.get(); // Ceci bloque jusqu'à ce que la tâche soit terminée
+                }
+                // Fermer le pool de threads
+                executorService.shutdown();
             }
 
             // 4. Trier les hopitaux par delais et lits disponibles
