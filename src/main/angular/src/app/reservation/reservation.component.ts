@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ApiService } from '../service/ApiService';
 
 // Importation directe de specialities.json
 import specialitiesData from '../../assets/specialities.json';
@@ -23,9 +24,25 @@ specialities: string[] = [];                                // Liste des spécia
 filteredSpecialities: string[] = [];
 showUrgencyPopup: boolean = false;                          // Indique si le popup d'urgence est affiché
 
-constructor() {
+jwtToken: string = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0LXVzZXIiLCJyb2xlIjoiUk9MRV9RVUFMSUZJRURfVVNFUiJ9.UD006gvM-0WabxCZ2UWEYrPkoxQrXu1pxQNnw3avnjhVCsrQ25KHT0zGkNa8uIFfxWqb-53twgndJUbpMI8hCA'; // Pour stocker le JWT
+csrfToken: string = ''; // Pour stocker le token CSRF
+
+constructor(private apiService: ApiService) { // Injection correcte de ApiService
     // Charger les spécialités au moment de l'initialisation
     this.loadSpecialities();
+    // Charger les tokens au démarrage
+    this.loadTokens();
+  }
+
+  // Charger les tokens au démarrage
+  loadTokens(): void {
+    this.apiService.getCsrfToken().subscribe({
+      next: (csrfToken: string) => {
+        this.csrfToken = csrfToken;
+        console.log('CSRF Token récupéré: ', this.csrfToken);
+      },
+      error: (err: any) => console.error('Erreur lors de la récupération du token CSRF', err),
+    });
   }
 
   // Charger les spécialités à partir du fichier JSON importé
@@ -100,8 +117,11 @@ constructor() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.jwtToken}`,           // Ajouter le JWT dans l'en-tête Authorization
+        'X-XSRF-TOKEN': this.csrfToken,                       // Ajouter le CSRF Token
       },
       body: JSON.stringify(reservationData),
+      credentials: 'include'
     })
       .then((response) => response.json())
       .then((data) => {
@@ -145,8 +165,11 @@ constructor() {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.jwtToken}`,  // Ajouter le JWT
+      'X-XSRF-TOKEN': this.csrfToken,              // Ajouter le CSRF Token
     },
     body: JSON.stringify(reservationData),
+    credentials: 'include'
   })
     .then((response) => response.json())
     .then((data) => {

@@ -13,11 +13,11 @@ import java.util.Locale;
 
 /**
  * Classe de tests pour l'application PoCMedHeadApplication.
- *
  * Contient des tests pour vérifier le bon démarrage de l'application et le chargement du contexte Spring.
  */
 @SpringBootTest
 class PoCMedHeadApplicationTests {
+
 	@Autowired
 	private ApplicationContext context;
 

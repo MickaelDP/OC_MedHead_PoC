@@ -1,4 +1,22 @@
 # Changelog
+## [v1.0.1] - Correction et amélioration de l'intégration CI/CD et des tokens JWT et CSRF
+
+Cette version apporte des ajustements importants à l'intégration des tokens JWT et CSRF ainsi qu'à l'amélioration de l'utilisation du pipeline CI/CD pour l'application de réservation de lits hospitaliers. Elle vise à renforcer la sécurité des échanges via des tokens et à mieux séparer les étapes de build et de test dans le processus d'intégration continue.
+
+### **Nouveautés**
+
+#### **Sécurisation avec JWT et CSRF**
+- **Gestion des tokens JWT et CSRF** :
+  - Intégration des tokens JWT et CSRF pour sécuriser les échanges entre le frontend et le backend.
+  - Mise en place d'un filtre d'authentification JWT et de gestion des tokens CSRF dans le backend Spring Boot.
+  - Ajout d'un contrôleur pour la récupération des tokens CSRF (`/test/csrf`).
+
+#### **CI/CD avec GitHub Actions**
+- **Optimisation du pipeline CI/CD** :
+  - Séparation des étapes de build et de tests dans le pipeline.
+  - Les tests ne sont plus exécutés à chaque push, mais peuvent être lancés manuellement via l'interface GitHub avec `workflow_dispatch`.
+  - Le build et le test du backend sont désormais distincts et gérés de manière plus précise.
+  - Introduction de la validation manuelle des tests via GitHub Actions, permettant de mieux contrôler les actions à effectuer.
 
 ## [v1.0.0] - Proof of Concept (PoC) Opérationnel
 

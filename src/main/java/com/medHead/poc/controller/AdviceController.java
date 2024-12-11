@@ -2,12 +2,14 @@ package com.medHead.poc.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * Gestionnaire global des exceptions pour les contrôleurs REST.
  */
+@CrossOrigin(origins = "http://localhost:4200")
 @RestControllerAdvice
 public class AdviceController {
     /**

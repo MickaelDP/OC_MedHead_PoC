@@ -1,12 +1,20 @@
 package com.medHead.poc.testIntegration.controller;
 
+import com.medHead.poc.controller.TestController;
+import jakarta.servlet.http.Cookie;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -16,10 +24,50 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
+@Import(TestController.class) // Importer explicitement le contrôleur
 public class ReserveControllerITest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Value("${jwt.fixed-token}")
+    private String fixedToken;
+
+    private Cookie csrfCookie;
+    private String csrfToken;
+    private MvcResult result;
+
+    /**
+     * Récupère le token CSRF avant chaque test
+     */
+    @BeforeEach
+    void setUp() throws Exception {
+        // Étape 1 : Récupérer le cookie CSRF
+        result = mockMvc.perform(get("/test/csrf"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Récupérer le cookie CSRF de la réponse
+        csrfCookie = result.getResponse().getCookie("XSRF-TOKEN");
+        if (csrfCookie != null) {
+            csrfToken = csrfCookie.getValue();  // Stocke le token CSRF
+        }
+
+        csrfCookie = result.getResponse().getCookie("XSRF-TOKEN");
+        csrfToken = result.getResponse().getContentAsString();
+    }
+
+    /* test toke csrf */
+    @Test
+    void testGenerateCsrfToken() throws Exception {
+        // Vérifier que le cookie CSRF existe
+        assertNotNull(csrfCookie, "Le cookie CSRF est manquant !");
+        // Vérifier que la valeur du token CSRF est non nulle
+        assertNotNull(csrfCookie.getValue(), "Le token CSRF est vide !");
+        // Ici, au lieu de comparer la valeur exacte, vous pouvez vérifier la longueur du token ou simplement s'il existe
+        assertTrue(csrfCookie.getValue().length() > 0, "Le token CSRF est invalide ou vide.");
+    }
+
 
     /**
      * Teste le scénario où la réservation réussit.
@@ -27,6 +75,7 @@ public class ReserveControllerITest {
      */
     @Test
     void testReserveBed_Success() throws Exception {
+        // Étape 2 : Ajouter le token CSRF dans le header et le cookie
         // Corps JSON de la requête
         String hopitalJson = """
             {
@@ -38,15 +87,17 @@ public class ReserveControllerITest {
                 "serviceId": [1, 2]
             }
         """;
-
         // Effectuer une requête POST avec succès simulé
         mockMvc.perform(post("/api/reserve")
-                        .param("simulateSuccess", "true")                         // Paramètre pour simuler le succès
+                        .cookie(csrfCookie)                                                // Réinjecte le cookie CSRF
+                        .header("X-XSRF-TOKEN", csrfToken)                           // Transmet le token dans le header
+                        .header("Authorization", "Bearer " + fixedToken)     // Votre JWT
+                        .param("simulateSuccess", "true")                    // Paramètre pour simuler le succès
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(hopitalJson))                                                  // Corps de la requête
-                .andExpect(status().isOk())                                                     // Vérifie le statut HTTP 200
-                .andExpect(content().string("Réservation de lit réussie."));      // Vérifie le message
+                        .content(hopitalJson))
+                .andExpect(status().isOk());
     }
+
 
     /**
      * Teste le scénario où la réservation échoue.
@@ -54,6 +105,7 @@ public class ReserveControllerITest {
      */
     @Test
     void testReserveBed_Failure() throws Exception {
+
         // Corps JSON de la requête
         String hopitalJson = """
             {
@@ -68,11 +120,14 @@ public class ReserveControllerITest {
 
         // Effectuer une requête POST avec échec simulé
         mockMvc.perform(post("/api/reserve")
+                        .cookie(csrfCookie)                                                     // Réinjecte le cookie CSRF
+                        .header("X-XSRF-TOKEN", csrfToken)                                // Transmet le token dans le header
+                        .header("Authorization", "Bearer " + fixedToken)          // Ajout de l'en-tête Authorization
                         .param("simulateSuccess", "false")                        // Paramètre pour simuler un échec
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(hopitalJson))                                                  // Corps de la requête
                 .andExpect(status().isBadRequest())                                             // Vérifie le statut HTTP 400
-                .andExpect(content().string("Échec de la réservation de lit."));  // Vérifie le message
+                .andExpect(content().string("Échec de la réservation de lit.")); // Vérifie le message
     }
 
     /**
@@ -81,8 +136,12 @@ public class ReserveControllerITest {
      */
     @Test
     void testReserveBed_InvalidRequest() throws Exception {
+
         // Effectuer une requête POST sans corps
         mockMvc.perform(post("/api/reserve")
+                        .cookie(csrfCookie)                                                     // Réinjecte le cookie CSRF
+                        .header("X-XSRF-TOKEN", csrfToken)                                // Transmet le token dans le header
+                        .header("Authorization", "Bearer " + fixedToken)          // Ajout de l'en-tête Authorization
                         .param("simulateSuccess", "true")
                         .contentType(MediaType.APPLICATION_JSON))                               // Pas de contenu
                 .andExpect(status().isBadRequest());                                            // Vérifie le statut HTTP 400

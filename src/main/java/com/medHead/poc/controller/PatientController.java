@@ -17,6 +17,7 @@ import java.util.UUID;
 /**
  * Contrôleur REST pour la gestion des patients (CRUD).
  */
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/patients")
 public class PatientController {
@@ -29,6 +30,7 @@ public class PatientController {
     private final HopitalService hopitalService;
     private final ReserveService reserveService;
     private final ResultService resultService;
+
 
     @Autowired
     public PatientController(

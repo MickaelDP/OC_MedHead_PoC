@@ -1,9 +1,12 @@
 package com.medHead.poc.config;
 
+import com.medHead.poc.controller.TokenController;
 import jakarta.annotation.PreDestroy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -27,6 +30,17 @@ import java.util.concurrent.TimeUnit;
 public class RestTemplateConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(RestTemplateConfig.class);
+
+    @Value("${jwt.fixed-token}") // Injecte le token JWT depuis application.properties
+    private String fixedToken;
+
+
+    /**
+     * Contrôleur utilisé pour ajouter le token CSRF aux en-têtes des requêtes.
+     */
+    @Autowired
+    private TokenController tokenController; // Utilisation du TokenController pour le CSRF
+
 
     /**
      * Gestionnaire de pool de connexions pour optimiser les performances des appels HTTP.
@@ -65,6 +79,18 @@ public class RestTemplateConfig {
 
             // Création du RestTemplate avec la factory configurée
             RestTemplate restTemplate = new RestTemplate(requestFactory);
+
+            // Ajout d'un intercepteur pour injecter le JWT et le CSRF
+            restTemplate.getInterceptors().add((request, body, execution) -> {
+                // Ajouter l'en-tête Authorization avec un JWT fixe
+                request.getHeaders().set("Authorization", "Bearer " + fixedToken);
+                // Ajouter le token CSRF
+                tokenController.addCsrfHeader(request.getHeaders());
+
+                return execution.execute(request, body);
+            });
+
+
             logger.info("RestTemplate configuré avec succès.");
             return restTemplate;
         } catch (Exception e) {

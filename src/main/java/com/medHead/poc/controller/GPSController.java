@@ -3,6 +3,7 @@ package com.medHead.poc.controller;
 import com.medHead.poc.services.GPSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,6 +38,7 @@ public class GPSController {
      * @return Un délai simulé en minutes ou une erreur si les coordonnées sont invalides.
      */
     @GetMapping("/delay")
+    @PreAuthorize("hasRole('USER')") // Accès réservé aux utilisateurs avec le rôle USER
     public ResponseEntity<Integer> getTravelDelay(
             @RequestParam double patientLat,
             @RequestParam double patientLon,

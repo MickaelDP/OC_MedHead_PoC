@@ -14,7 +14,18 @@
 					"name": "Create a patient",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Autorization}}",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{X-XSRF-TOKEN}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n  \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\r\n  \"specialite\": \"Cardiologie\",\r\n  \"responsable\": \"string\",\r\n  \"qualite\": \"string\",\r\n  \"latitude\": 0,\r\n  \"longitude\": 0\r\n}",
@@ -42,7 +53,18 @@
 					"name": "Get all patients",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Autorization}}",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{X-XSRF-TOKEN}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{Base URL}}/api/patients",
 							"host": [
@@ -61,7 +83,18 @@
 					"name": "Get patient by ID",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Autorization}}",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{X-XSRF-TOKEN}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{Base URL}}/api/patients/{{UUID patient}}",
 							"host": [
@@ -81,7 +114,18 @@
 					"name": "Process patient",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Autorization}}",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{X-XSRF-TOKEN}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n  \"id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\r\n  \"specialite\": \"Cardiologie\",\r\n  \"responsable\": \"Frank Estein\",\r\n  \"qualite\": \"Dr.\",\r\n  \"latitude\": 0,\r\n  \"longitude\": 0\r\n}",
@@ -110,7 +154,18 @@
 					"name": "Delete a patient",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Autorization}}",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{X-XSRF-TOKEN}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{Base URL}}/api/patients/{{UUID patient}}",
 							"host": [
@@ -135,7 +190,18 @@
 					"name": "Reserve a bed",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Autorization}}",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{X-XSRF-TOKEN}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n  \"id\": 1,\r\n  \"nom\": \"string\",\r\n  \"serviceIdsDisponibles\": [\r\n    0\r\n  ],\r\n  \"latitude\": 0,\r\n  \"longitude\": 0,\r\n  \"nombreLitDisponible\": 0,\r\n  \"delai\": 0\r\n}",
@@ -169,7 +235,18 @@
 					"name": "Get hospitals by service",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Autorization}}",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{X-XSRF-TOKEN}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{Base URL}}/api/hopitaux/service/{{Service ID }}",
 							"host": [
@@ -197,7 +274,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{Base URL}}/api/hospitals?serviceId=5&lat=40&lon=40",
+							"raw": "{{Base URL}}/api/hospitals?serviceId=5&lat=40&lon=40&Authorization={{Autorization}}&X-XSRF-TOKEN={{X-XSRF-TOKEN}}",
 							"host": [
 								"{{Base URL}}"
 							],
@@ -217,6 +294,14 @@
 								{
 									"key": "lon",
 									"value": "40"
+								},
+								{
+									"key": "Authorization",
+									"value": "{{Autorization}}"
+								},
+								{
+									"key": "X-XSRF-TOKEN",
+									"value": "{{X-XSRF-TOKEN}}"
 								}
 							]
 						},
@@ -233,7 +318,18 @@
 					"name": "Get delai",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{Autorization}}",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{X-XSRF-TOKEN}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{Base URL}}/api/gps/delay?patientLat=40&patientLon=40&hospitalLat=50&hospitalLon=50",
 							"host": [
@@ -268,6 +364,30 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "{{Base URL}}/test/csrf",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{Autorization}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{Base URL}}/test/csrf",
+					"host": [
+						"{{Base URL}}"
+					],
+					"path": [
+						"test",
+						"csrf"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
