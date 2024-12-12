@@ -25,15 +25,15 @@ import java.util.List;
  * présent dans l'en-tête d'autorisation et d'authentifier l'utilisateur.
  */
 @Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter implements JwtAuthenticationFilterInterface{
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     private static final Marker HTTP_MARKER = MarkerFactory.getMarker("HTTP_FILE");
 
-    private final JwtUtil jwtUtil;
+    private final JwTUtilInterface jwtUtil;
 
     @Autowired
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(JwTUtilInterface jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
 
@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @throws ServletException en cas d'erreur au niveau du traitement de la requête.
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
         // Log de la requête entrante

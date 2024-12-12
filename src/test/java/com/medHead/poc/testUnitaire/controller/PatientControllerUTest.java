@@ -4,12 +4,7 @@ import com.medHead.poc.entity.Hopital;
 import com.medHead.poc.controller.PatientController;
 import com.medHead.poc.model.Patient;
 import com.medHead.poc.model.Result;
-import com.medHead.poc.services.PatientService;
-import com.medHead.poc.services.PopulateHopitalService;
-import com.medHead.poc.services.GPSService;
-import com.medHead.poc.services.HopitalService;
-import com.medHead.poc.services.ReserveService;
-import com.medHead.poc.services.ResultService;
+import com.medHead.poc.services.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -30,19 +25,19 @@ import static org.springframework.http.HttpStatus.*;
 public class PatientControllerUTest {
 
     @Mock
-    private PatientService patientService;
+    private PatientServiceInterface patientService;
 
     @Mock
-    private PopulateHopitalService populateHopitalService;
+    private PopulateHopitalServiceInterface populateHopitalService;
 
     @Mock
-    private GPSService gpsService;
+    private GPSServiceInterface gpsService;
 
     @Mock
     private HopitalService hopitalService;
 
     @Mock
-    private ReserveService reserveService;
+    private ReserveServiceInterface reserveService;
 
 
     @Mock

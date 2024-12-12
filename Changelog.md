@@ -1,5 +1,42 @@
 # Changelog
+## [v1.0.4] - Implémentation des interfaces pour renforcer SOLID
 
+Cette version introduit la mise en place d'interfaces pour la majorité des classes métiers et techniques de l'application, dans le but de respecter les principes SOLID, notamment le principe d'inversion de dépendance et de ségrégation des interfaces. Cela vise à améliorer la testabilité, la modularité et l'évolutivité du code. Toutefois, certaines limitations subsistent sur trois éléments particuliers.
+
+### **Nouveautés**
+
+#### **Refactorisation pour inclure des interfaces**
+- **Ajout d'interfaces** pour les classes principales :
+  - **Services métiers** : `PatientService`, `GPSService`, `ReserveService`, `PopulateHopitalService`, `HopitalService`, `ResultService`.
+  - **Classes de sécurité** : `JwtUtil`, `JwtAuthenticationFilter`.
+  - **Configuration** : `RestTemplateConfig`.
+  - **Contrôleurs** : `TestController`, `TokenController`.
+- **Adaptation des classes existantes** pour implémenter les nouvelles interfaces.
+- **Réécriture des tests unitaires** pour qu'ils utilisent les interfaces au lieu des implémentations concrètes, sauf pour les cas où cela n'était pas possible (voir **limitations**).
+
+#### **Respect des principes SOLID**
+- **Inversion de dépendance** : Les dépendances sont désormais injectées via leurs interfaces respectives, facilitant le remplacement par d'autres implémentations ou des mocks lors des tests.
+- **Ségrégation des interfaces** : Les interfaces créées se concentrent sur les méthodes essentielles nécessaires pour chaque classe, réduisant ainsi leur complexité.
+
+### **Limitations**
+Malgré les efforts pour une adoption généralisée des interfaces, quelques contraintes techniques ont limité leur application complète :
+1. **`JwtAuthenticationFilter`** :
+  - Spring Security exige une classe concrète pour ajouter un filtre avec `.addFilterBefore` dans la configuration de sécurité. Par conséquent, l'interface n'a pas pu être utilisée directement dans ce contexte.
+  - **Solution** : La classe concrète `JwtAuthenticationFilter` reste utilisée dans la configuration de sécurité.
+
+2. **`PopulateHopitalService`** :
+  - La gestion du `RestTemplate` a nécessité un contournement via un cast explicite pour injecter certaines dépendances (comme `setRestTemplate`). Cette approche fonctionne mais pourrait être optimisée pour éviter ces contournements.
+
+3. **Contrôleurs (`TestController`, `TokenController`)** :
+  - Les tests d'intégration utilisant `MockMvc` ne permettent pas directement l'utilisation des interfaces des contrôleurs. Par conséquent, les classes concrètes ont été utilisées dans les tests pour éviter des erreurs liées à l'import explicite des contrôleurs.
+
+### **Améliorations générales**
+- **Mise à jour des tests** pour s'aligner sur les nouvelles interfaces, augmentant la flexibilité des cas de tests.
+- **Documentation** dans le code pour indiquer où et pourquoi des contournements ont été nécessaires.
+
+---
+
+Cette version marque une étape importante dans l'architecture de l'application, renforçant sa robustesse tout en identifiant les zones à améliorer dans les versions futures pour atteindre un respect plus strict des principes SOLID.
 ## [v1.0.3] - Ajout de la gestion des logs et amélioration de la traçabilité
 
 Cette version introduit une gestion avancée des logs pour améliorer la traçabilité des actions effectuées dans l'application, avec une distinction claire entre les logs d'applications et les logs HTTP. Elle permet de mieux suivre les événements internes et externes tout en respectant les bonnes pratiques en matière de RGPD.

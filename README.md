@@ -2,8 +2,8 @@
 ![Couverture du projet](asset/cover.png)
 
 ### **MedHead - Gestion des réservations hospitalières**
-**Version actuelle :** v1.0.0  
-**Statut du projet :** Fonctionnel, prêt pour intégration et tests utilisateurs.
+**Version actuelle :** v1.0.4  
+**Statut du projet :** Fonctionnel.
 ---
 
 ## Table des Matières

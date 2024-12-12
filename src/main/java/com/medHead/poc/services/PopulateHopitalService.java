@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Utilise un cache local pour optimiser les performances et réduire les appels à l'API externe.
  */
 @Service
-public class PopulateHopitalService {
+public class PopulateHopitalService implements PopulateHopitalServiceInterface {
 
     @Autowired
     private RestTemplate restTemplate;
@@ -141,6 +141,10 @@ public class PopulateHopitalService {
             logger.error(APP_MARKER, "La longitude doit être comprise entre -180 et 180. Entrée invalide: longitude={}", longitude);
             throw new IllegalArgumentException("La longitude doit être comprise entre -180 et 180.");
         }
+    }
+
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     /**

@@ -1,9 +1,11 @@
 package com.medHead.poc.testUnitaire.service;
 
 import com.medHead.poc.entity.Hopital;
-import com.medHead.poc.services.ReserveService;
+import com.medHead.poc.services.ReserveServiceInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
@@ -13,9 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * Test unitaire pour la classe ReserveService.
  * Vérifie le comportement de la méthode reserveBed dans différents scénarios.
  */
+@SpringBootTest
 public class ReserveServiceUTest {
 
-    private ReserveService reserveService; // Instance du service à tester
+    @Autowired
+    private ReserveServiceInterface reserveService; // Instance du service à tester
     private Hopital hopital; // Objet Hopital utilisé dans les tests
 
     /**
@@ -23,9 +27,6 @@ public class ReserveServiceUTest {
      */
     @BeforeEach
     void setUp() {
-        // Initialisation du service
-        reserveService = new ReserveService();
-
         // Préparer un objet Hopital pour les tests
         hopital = new Hopital("Hopital A", List.of(1, 2, 5), 48.8566, 2.3522, 10);
     }

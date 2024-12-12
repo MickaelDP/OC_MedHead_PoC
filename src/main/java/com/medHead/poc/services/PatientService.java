@@ -16,7 +16,7 @@ import java.util.*;
  * Service pour gérer les patients et leur attribution à des services médicaux.
  */
 @Service
-public class PatientService {
+public class PatientService implements PatientServiceInterface {
 
     private static final Logger logger = LoggerFactory.getLogger(PatientService.class);
     private static final Marker HTTP_MARKER = MarkerFactory.getMarker("HTTP_FILE");
@@ -87,6 +87,7 @@ public class PatientService {
         savePatient(patient);
         return patient;
     }
+
 
     /**
      * Récupère tous les patients enregistrés.

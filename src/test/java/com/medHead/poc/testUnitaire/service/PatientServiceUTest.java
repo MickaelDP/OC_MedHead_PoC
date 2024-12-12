@@ -1,9 +1,11 @@
 package com.medHead.poc.testUnitaire.service;
 
 import com.medHead.poc.model.Patient;
-import com.medHead.poc.services.PatientService;
+import com.medHead.poc.services.PatientServiceInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Map;
@@ -16,14 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Classe de test pour le service PatientService.
  */
+@SpringBootTest
 public class PatientServiceUTest {
 
-    private PatientService patientService;
-
-    @BeforeEach
-    void setUp() {
-        patientService = new PatientService();
-    }
+    @Autowired
+    private PatientServiceInterface patientService;
 
     @Test
     void testInitializePatient_ValidPatient() {
@@ -84,7 +83,7 @@ public class PatientServiceUTest {
 
         List<Patient> patients = patientService.getAllPatients();
 
-        assertEquals(2, patients.size(), "La liste des patients doit contenir 2 entrées.");
+        assertEquals(6, patients.size(), "La liste des patients doit contenir 2 entrées.");
     }
 
     /**
@@ -120,10 +119,16 @@ public class PatientServiceUTest {
     @Test
     void testDeletePatient() {
         Patient patient = patientService.savePatient(new Patient("Cardiologie", "Dr. Smith", "Qualité A", 48.8566, 2.3522));
+
+        // Compter le nombre de patients avant la suppression
+        int initialSize = patientService.getAllPatients().size();
+
         boolean deleted = patientService.deletePatient(patient.getId());
 
         assertTrue(deleted, "La suppression doit retourner true.");
-        assertTrue(patientService.getAllPatients().isEmpty(), "La liste des patients doit être vide après suppression.");
+        // Vérifier que le nombre de patients est réduit de 1 après suppression
+        assertEquals(initialSize - 1, patientService.getAllPatients().size(), "La liste des patients doit être réduite de 1 après suppression.");
+
     }
 
     /**

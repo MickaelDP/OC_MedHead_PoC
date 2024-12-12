@@ -1,7 +1,7 @@
 package com.medHead.poc.controller;
 
 import com.medHead.poc.entity.Hopital;
-import com.medHead.poc.services.ReserveService;
+import com.medHead.poc.services.ReserveServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ public class ReserveController {
     private static final Logger logger = LoggerFactory.getLogger(ReserveController.class);
     private static final Marker HTTP_MARKER = MarkerFactory.getMarker("HTTP_FILE");
 
-    private final ReserveService reserveService;
+    private final ReserveServiceInterface reserveService;
 
     /**
      * Constructeur avec injection de dépendance.
@@ -29,7 +29,7 @@ public class ReserveController {
      * @param reserveService Le service de réservation utilisé pour traiter les demandes.
      */
     @Autowired
-    public ReserveController(ReserveService reserveService) {
+    public ReserveController(ReserveServiceInterface reserveService) {
         this.reserveService = reserveService;
     }
 

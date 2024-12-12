@@ -22,7 +22,7 @@ import java.util.Date;
  * en utilisant une clé secrète définie dans les propriétés de l'application.
  */
 @Component
-public class JwtUtil {
+public class JwtUtil implements JwTUtilInterface {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
     private static final Marker APP_MARKER = MarkerFactory.getMarker("APP_FILE"); // Marqueur pour les logs non HTTP

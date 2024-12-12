@@ -31,21 +31,21 @@ public class PatientController {
     private static final Marker AP_MARKER = MarkerFactory.getMarker("APPLICATION_FILE");  // Marqueur pour logs généraux de l'application
 
 
-    private final PatientService patientService;
-    private final PopulateHopitalService populateHopitalService;
-    private final GPSService gpsService;
+    private final PatientServiceInterface patientService;
+    private final PopulateHopitalServiceInterface populateHopitalService;
+    private final GPSServiceInterface gpsService;
     private final HopitalService hopitalService;
-    private final ReserveService reserveService;
+    private final ReserveServiceInterface reserveService;
     private final ResultService resultService;
 
 
     @Autowired
     public PatientController(
-            PatientService patientService,
-            PopulateHopitalService populateHopitalService,
-            GPSService gpsService,
+            PatientServiceInterface patientService,
+            PopulateHopitalServiceInterface populateHopitalService,
+            GPSServiceInterface gpsService,
             HopitalService hopitalService,
-            ReserveService reserveService,
+            ReserveServiceInterface reserveService,
             ResultService resultService) {
         this.patientService = patientService;
         this.populateHopitalService = populateHopitalService;

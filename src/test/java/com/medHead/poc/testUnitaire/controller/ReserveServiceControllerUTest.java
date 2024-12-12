@@ -2,7 +2,7 @@ package com.medHead.poc.testUnitaire.controller;
 
 import com.medHead.poc.entity.Hopital;
 import com.medHead.poc.controller.ReserveController;
-import com.medHead.poc.services.ReserveService;
+import com.medHead.poc.services.ReserveServiceInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class ReserveServiceControllerUTest {
 
     @Mock
-    private ReserveService reserveService;
+    private ReserveServiceInterface reserveService;
 
     @InjectMocks
     private ReserveController reserveController;

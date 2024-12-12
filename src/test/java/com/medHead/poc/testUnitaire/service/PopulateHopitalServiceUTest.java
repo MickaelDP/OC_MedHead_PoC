@@ -1,11 +1,13 @@
 package com.medHead.poc.testUnitaire.service;
 
 import com.medHead.poc.entity.Hopital;
-import com.medHead.poc.services.PopulateHopitalService;
+import com.medHead.poc.services.PopulateHopitalServiceInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -16,19 +18,20 @@ import static org.mockito.Mockito.*;
 /**
  * Classe de test unitaire pour PopulateHopitalService.
  */
+@SpringBootTest
 public class PopulateHopitalServiceUTest {
 
     @Mock
     private RestTemplate restTemplate;
 
-    private PopulateHopitalService populateHopitalService;
+    @Autowired
+    private PopulateHopitalServiceInterface populateHopitalService;
 
     @BeforeEach
     void setUp() {
         // Initialise les mocks
         MockitoAnnotations.openMocks(this);
-        populateHopitalService = new PopulateHopitalService(restTemplate);
-        // Injecte une URL de base correcte
+        populateHopitalService.setRestTemplate(restTemplate); // Méthode accessible directement
         populateHopitalService.setApiUrl("http://localhost:8080/api");
     }
 

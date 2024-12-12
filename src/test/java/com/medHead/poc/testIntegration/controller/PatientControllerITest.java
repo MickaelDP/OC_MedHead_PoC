@@ -1,7 +1,7 @@
 package com.medHead.poc.testIntegration.controller;
 
 import com.medHead.poc.model.Patient;
-import com.medHead.poc.services.PatientService;
+import com.medHead.poc.services.PatientServiceInterface;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ public class PatientControllerITest {
     private MockMvc mockMvc;
 
     @Autowired
-    private PatientService patientService;
+    private PatientServiceInterface patientService;
 
     @Autowired
     private RestTemplate restTemplate;

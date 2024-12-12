@@ -1,22 +1,21 @@
 package com.medHead.poc.testUnitaire.service;
 
-import com.medHead.poc.services.GPSService;
+import com.medHead.poc.services.GPSServiceInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Classe de test unitaire pour GPSService.
  */
+@SpringBootTest
 public class GPSServiceUTest {
-    private GPSService gpsService;
 
-    @BeforeEach
-    void setUp() {
-        // Initialise le service GPS avant chaque test
-        gpsService = new GPSService();
-    }
+    @Autowired
+    private GPSServiceInterface gpsService;
 
     /**
      * Teste si le délai de trajet généré est dans les limites définies.

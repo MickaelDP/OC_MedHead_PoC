@@ -1,10 +1,12 @@
 package com.medHead.poc.config;
 
 import com.medHead.poc.security.JwtAuthenticationFilter;
+import com.medHead.poc.security.JwtAuthenticationFilterInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,6 +25,7 @@ public class SecurityConfig {
      * Constructeur pour injecter le filtre d'authentification JWT.
      * @param jwtAuthenticationFilter le filtre JWT personnalisé pour gérer l'authentification.
      */
+    @Autowired
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }

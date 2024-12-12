@@ -1,6 +1,6 @@
 package com.medHead.poc.testUnitaire.config;
 
-import com.medHead.poc.services.PopulateHopitalService;
+import com.medHead.poc.services.PopulateHopitalServiceInterface;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 public class RestTemplateConfigUTest {
     @Autowired
-    private PopulateHopitalService populateHopitalService;
+    private PopulateHopitalServiceInterface populateHopitalService;
 
     @Autowired
     private RestTemplate restTemplate;

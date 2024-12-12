@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * Ce service simule une réservation réussie ou échouée en fonction de l'entrée.
  */
 @Service
-public class ReserveService {
+public class ReserveService implements ReserveServiceInterface {
 
     private static final Logger logger = LoggerFactory.getLogger(ReserveService.class);
     private static final Marker HTTP_MARKER = MarkerFactory.getMarker("http");

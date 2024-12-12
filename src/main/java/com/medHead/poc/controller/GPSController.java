@@ -1,10 +1,11 @@
 package com.medHead.poc.controller;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-import com.medHead.poc.services.GPSService;
+import com.medHead.poc.services.GPSServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,10 +26,10 @@ public class GPSController {
     private static final Logger logger = LoggerFactory.getLogger(GPSController.class);
     private static final Marker HTTP_MARKER = MarkerFactory.getMarker("HTTP_FILE");
     private static final Marker AP_MARKER = MarkerFactory.getMarker("APPLICATION_FILE");  // Marqueur pour logs généraux de l'application
-    private final GPSService gpsService;
+    private final GPSServiceInterface gpsService;
 
     @Autowired
-    public GPSController(GPSService gpsService) {
+    public GPSController(GPSServiceInterface gpsService) {
         this.gpsService = gpsService;
     }
 

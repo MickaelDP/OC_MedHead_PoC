@@ -13,7 +13,7 @@ import java.util.Random;
  * Service pour simuler des appels à une API GPS pour obtenir un délai.
  */
 @Service
-public class GPSService {
+public class GPSService implements GPSServiceInterface{
 
     private static final Logger logger = LoggerFactory.getLogger(GPSService.class);
     private static final Marker HTTP_MARKER = MarkerFactory.getMarker("HTTP_FILE");
