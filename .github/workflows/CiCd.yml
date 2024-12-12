@@ -1,13 +1,13 @@
-name: CI/CD Pipeline
+name: On demand CI/CD Pipeline
 
 # Utilisation sur githubaction à la demande
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: 'Branch to test'
+      encironement:
+        description: ''
         required: true
-        default: 'main'
+        default: 'dev'
         options:
           - main
           - test
