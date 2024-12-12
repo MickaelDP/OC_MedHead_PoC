@@ -1,6 +1,10 @@
 package com.medHead.poc.config;
 
 import com.medHead.poc.security.JwtAuthenticationFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,6 +14,8 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 public class SecurityConfig {
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+    private static final Marker APP_MARKER = MarkerFactory.getMarker("APP_FILE");
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -30,6 +36,8 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        logger.info(APP_MARKER, "Configuration de la chaîne de sécurité en cours.");
+
         http
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())           // Stockage dans un cookie accessible par JS
@@ -40,6 +48,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").hasRole("QUALIFIED_USER")               // Restrictions habituelles pour /api/**
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        logger.info(APP_MARKER, "Filtres de sécurité et règles d'autorisation appliquées.");
 
         return http.build();
     }

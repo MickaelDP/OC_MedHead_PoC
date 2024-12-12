@@ -1,5 +1,10 @@
 package com.medHead.poc.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
+
 import java.util.UUID;
 
 /**
@@ -8,6 +13,9 @@ import java.util.UUID;
  * l'hôpital, et la disponibilité des ressources.
  */
 public class Result {
+    private static final Logger logger = LoggerFactory.getLogger(Result.class);
+    private static final Marker APP_MARKER = MarkerFactory.getMarker("APP_FILE");
+
     private UUID id;                      // Identifiant unique du résultat
     private UUID patientId;               // Identifiant unique du patient concerné
     private String specialite;            // Nom de la spécialité demandée pour le patient
@@ -19,6 +27,7 @@ public class Result {
     // Constructeurs
     public Result() {
         this.id = UUID.randomUUID();
+        logger.info(APP_MARKER, "Création d'un résultat avec ID généré : {}", id);
     }
 
     /**
@@ -39,6 +48,7 @@ public class Result {
         setDelai(delai);
         setSpecialiteDisponible(specialiteDisponible);
         setLitReserve(litReserve);
+        logger.info(APP_MARKER, "Résultat créé pour le patient avec ID : {} et hôpital : {}", patientId, hopitalNom);
     }
 
     // Getters et Setters
@@ -48,9 +58,11 @@ public class Result {
 
     public void setId(UUID id) {
         if (id == null) {
+            logger.error(APP_MARKER, "Tentative de définir un ID null pour le résultat.");
             throw new IllegalArgumentException("L'identifiant unique (UUID) ne peut pas être null.");
         }
         this.id = id;
+        logger.info(APP_MARKER, "ID du résultat défini : {}", id);
     }
 
     public UUID getPatientId() {
@@ -65,9 +77,11 @@ public class Result {
      */
     public void setPatientId(UUID patientId) {
         if (patientId == null) {
+            logger.error(APP_MARKER, "Tentative de définir un patientId null.");
             throw new IllegalArgumentException("L'identifiant du patient doit être un nombre positif non nul.");
         }
         this.patientId = patientId;
+        logger.info(APP_MARKER, "ID du patient dans le résultat défini : {}", patientId);
     }
 
     public String getSpecialite() {
@@ -82,9 +96,11 @@ public class Result {
      */
     public void setSpecialite(String specialite) {
         if (specialite == null || specialite.trim().isEmpty()) {
+            logger.error(APP_MARKER, "Tentative de définir une spécialité vide ou nulle.");
             throw new IllegalArgumentException("La spécialité demandée ne peut pas être vide ou null.");
         }
         this.specialite = specialite;
+        logger.info(APP_MARKER, "Spécialité du patient définie : {}", specialite);
     }
 
     public String getHopitalNom() {
@@ -99,9 +115,11 @@ public class Result {
      */
     public void setHopitalNom(String hopitalNom) {
         if (hopitalNom == null || hopitalNom.trim().isEmpty()) {
+            logger.error(APP_MARKER, "Tentative de définir un nom d'hôpital vide ou nulle.");
             throw new IllegalArgumentException("Le nom de l'hôpital sélectionné ne peut pas être vide ou null.");
         }
         this.hopitalNom = hopitalNom;
+        logger.info(APP_MARKER, "Nom de l'hôpital défini : {}", hopitalNom);
     }
 
     public int getDelai() {
@@ -116,9 +134,11 @@ public class Result {
      */
     public void setDelai(int delai) {
         if (delai < 0) {
+            logger.error(APP_MARKER, "Tentative de définir un délai négatif : {}", delai);
             throw new IllegalArgumentException("Le délai estimé ne peut pas être négatif.");
         }
         this.delai = delai;
+        logger.info(APP_MARKER, "Délai pour l'hôpital défini : {} minutes", delai);
     }
 
     public boolean isSpecialiteDisponible() {
@@ -132,6 +152,7 @@ public class Result {
      */
     public void setSpecialiteDisponible(boolean specialiteDisponible) {
         this.specialiteDisponible = specialiteDisponible;
+        logger.info(APP_MARKER, "Spécialité disponible dans l'hôpital : {}", specialiteDisponible ? "Oui" : "Non");
     }
 
     public boolean isLitReserve() {
@@ -145,6 +166,7 @@ public class Result {
      */
     public void setLitReserve(boolean litReserve) {
         this.litReserve = litReserve;
+        logger.info(APP_MARKER, "Lit réservé dans l'hôpital : {}", litReserve ? "Oui" : "Non");
     }
 
     @Override

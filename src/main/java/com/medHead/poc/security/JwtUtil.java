@@ -5,6 +5,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +23,10 @@ import java.util.Date;
  */
 @Component
 public class JwtUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
+    private static final Marker APP_MARKER = MarkerFactory.getMarker("APP_FILE"); // Marqueur pour les logs non HTTP
+
     /**
      * Clé secrète utilisée pour signer les tokens JWT.
      * La valeur est injectée depuis le fichier `application.properties`.
@@ -36,8 +44,8 @@ public class JwtUtil {
     @PostConstruct
     public void init() {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        logger.info(APP_MARKER, "Clé JWT initialisée avec succès.");
     }
-
     /**
      * Génère un token JWT pour un utilisateur donné.
      *
@@ -46,12 +54,17 @@ public class JwtUtil {
      * @return un token JWT signé contenant le sujet, les rôles, et une date d'expiration.
      */
     public String generateToken(String username, String role) {
-        return Jwts.builder()
+        logger.debug(APP_MARKER, "Génération du token pour l'utilisateur: {}", username);
+
+        String token = Jwts.builder()
                 .setSubject(username)
                 .claim("role", role)
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1 jour
                 .signWith(key)
                 .compact();
+
+        logger.debug(APP_MARKER, "Token JWT généré pour l'utilisateur: {}", username);
+        return token;
     }
 
     /**
@@ -62,11 +75,20 @@ public class JwtUtil {
      * @throws io.jsonwebtoken.JwtException si le token est invalide ou expiré.
      */
     public Claims validateToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        logger.debug(APP_MARKER, "Validation du token JWT.");
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            logger.debug(APP_MARKER, "Token validé avec succès.");
+            return claims;
+        } catch (Exception e) {
+            logger.error(APP_MARKER, "Échec de la validation du token JWT: {}", e.getMessage());
+            throw e;  // Lancer l'exception pour la gestion dans le filtre
+        }
     }
     /**
      * Méthode de test pour générer un token JWT en local.
@@ -74,6 +96,7 @@ public class JwtUtil {
      * Décommenter pour utiliser au besoin
      * @param args les arguments de la ligne de commande (non utilisés).
      */
+
     /*
     public static void main(String[] args) {
         String secret = "kpPb9R2v7NcGxJ5mQuZnR7q6k7Z3NdMv8XkM4A7C6aPp9W2q3RyR7NzV9QqR3A8x";             //clé de application.properties jwt.secret pour genéré jwt.fixed-token

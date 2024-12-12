@@ -9,8 +9,8 @@ on:
         required: true
         default: 'main'
         options:
-          - 'main'
-          - 'test'
+          - main
+          - test
 
 jobs:
   build:

@@ -5,6 +5,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,6 +26,9 @@ import java.util.List;
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    private static final Marker HTTP_MARKER = MarkerFactory.getMarker("HTTP_FILE");
 
     private final JwtUtil jwtUtil;
 
@@ -43,11 +50,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
+        // Log de la requête entrante
+        logger.debug(HTTP_MARKER, "Request received: {} {}", request.getMethod(), request.getRequestURI());
+
         String header = request.getHeader("Authorization");
-        System.out.println("Authorization Header: " + header);
 
         if (header == null || !header.startsWith("Bearer ")) {
-            System.out.println("No valid Authorization header found.");
+            logger.warn(HTTP_MARKER, "No valid Authorization header found for request: {}", request.getRequestURI());
             chain.doFilter(request, response);
             return;
         }
@@ -58,7 +67,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username = claims.getSubject();
             String role = claims.get("role", String.class);
 
-            System.out.println("Token Validated - Username: " + username + ", Role: " + role);
+            // Log du résultat de la validation du token
+            logger.debug(HTTP_MARKER, "Token validated for user: {} with role: {}", username, role);
 
             if (username != null && role != null) {
                 UsernamePasswordAuthenticationToken authentication =
@@ -66,7 +76,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            System.out.println("Token validation failed: " + e.getMessage());
+            // Log des erreurs de validation du token
+            logger.error(HTTP_MARKER, "Token validation failed for request: {}. Error: {}", request.getRequestURI(), e.getMessage());
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
         }

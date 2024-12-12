@@ -1,0 +1,33 @@
+<configuration>
+
+    <!-- Appender pour les logs HTTP -->
+    <appender name="HTTP_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/http_logs.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender pour les logs applicatifs -->
+    <appender name="APP_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/medHead.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logger qui filtre les logs par marqueur HTTP -->
+    <logger name="com.medHead.poc" level="DEBUG">
+        <appender-ref ref="HTTP_FILE" />
+    </logger>
+
+    <!-- Logger qui filtre les logs applicatifs -->
+    <logger name="com.medHead.app" level="DEBUG">
+        <appender-ref ref="APP_FILE" />
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+</configuration>

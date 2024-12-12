@@ -5,6 +5,8 @@ import jakarta.annotation.PreDestroy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class RestTemplateConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(RestTemplateConfig.class);
+    private static final Marker APP_MARKER = MarkerFactory.getMarker("APP_FILE");
 
     @Value("${jwt.fixed-token}") // Injecte le token JWT depuis application.properties
     private String fixedToken;
@@ -90,11 +93,12 @@ public class RestTemplateConfig {
                 return execution.execute(request, body);
             });
 
-
-            logger.info("RestTemplate configuré avec succès.");
+            // Log de succès de la configuration
+            logger.info(APP_MARKER, "RestTemplate configuré avec succès.");
             return restTemplate;
         } catch (Exception e) {
-            logger.error("Erreur lors de la configuration du RestTemplate : {}", e.getMessage(), e);
+            // Log d'erreur lors de la configuration
+            logger.error(APP_MARKER, "Erreur lors de la configuration du RestTemplate : {}", e.getMessage(), e);
             throw new RuntimeException("Erreur lors de la configuration du RestTemplate", e);
         }
     }
@@ -107,7 +111,7 @@ public class RestTemplateConfig {
         connectionManager = new PoolingHttpClientConnectionManager(10, TimeUnit.SECONDS);
         connectionManager.setMaxTotal(100);                                                         // Nombre total maximum de connexions
         connectionManager.setDefaultMaxPerRoute(50);                                                // Nombre maximum de connexions par route
-        logger.info("PoolingHttpClientConnectionManager configuré avec maxTotal={} et maxPerRoute={}",
+        logger.info(APP_MARKER, "PoolingHttpClientConnectionManager configuré avec maxTotal={} et maxPerRoute={}",
                 connectionManager.getMaxTotal(), connectionManager.getDefaultMaxPerRoute());
     }
 
@@ -127,7 +131,7 @@ public class RestTemplateConfig {
         sc.init(null, trustAllCerts, new java.security.SecureRandom());
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
         HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
-        logger.info("Validation SSL désactivée.");
+        logger.info(APP_MARKER, "Validation SSL désactivée.");
     }
 
     /**
@@ -137,7 +141,7 @@ public class RestTemplateConfig {
     @PreDestroy
     public void cleanup() {
         if (connectionManager != null) {
-            logger.info("Nettoyage du PoolingHttpClientConnectionManager.");
+            logger.info(APP_MARKER, "Nettoyage du PoolingHttpClientConnectionManager.");
             connectionManager.close();
         }
     }

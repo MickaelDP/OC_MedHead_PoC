@@ -1,4 +1,28 @@
 # Changelog
+
+## [v1.0.3] - Ajout de la gestion des logs et amélioration de la traçabilité
+
+Cette version introduit une gestion avancée des logs pour améliorer la traçabilité des actions effectuées dans l'application, avec une distinction claire entre les logs d'applications et les logs HTTP. Elle permet de mieux suivre les événements internes et externes tout en respectant les bonnes pratiques en matière de RGPD.
+
+### **Nouveautés**
+
+#### **Gestion des Logs**
+- **Logs d'application** :
+  - Mise en place d’un fichier de log spécifique pour l’historique applicatif : `/logs/ledHead.log`.
+  - Ajout des logs relatifs aux calculs internes, aux erreurs internes, ainsi qu’aux événements importants du processus métier.
+  - Amélioration de la lisibilité et de l’archivage des événements liés au fonctionnement interne de l’application.
+
+- **Logs de communication HTTP** :
+  - Mise en place d’un fichier de log spécifique pour les communications HTTP : `/logs/http_logs.log`.
+  - Séparation claire des logs internes et des échanges HTTP pour améliorer la sécurité et la traçabilité des interactions avec des services externes.
+  - Enregistrement des requêtes et réponses HTTP, avec une attention particulière à la confidentialité des données sensibles.
+
+- **Filtrage des logs** :
+  - Configuration de `logback` afin de filtrer les logs selon leur type, permettant de conserver un historique détaillé tout en limitant l'impact des logs sur la performance du système.
+
+- **Sécurité des logs** :
+  - Application de mesures de sécurité pour assurer que les logs respectent les bonnes pratiques RGPD, notamment l’anonymisation ou l’omission de données sensibles dans les logs HTTP.
+
 ## [v1.0.2] - Implémentation du multithreading et améliorations diverses
 
 Cette version introduit des améliorations majeures en termes de performance grâce à l'implémentation du multithreading pour le calcul des délais de trajets, permettant ainsi d'optimiser les performances lors des requêtes externes, telles que celles envoyées au service GPS. De plus, diverses optimisations ont été apportées pour améliorer la stabilité et l'efficacité du processus global.

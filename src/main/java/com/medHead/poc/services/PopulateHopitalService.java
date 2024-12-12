@@ -3,7 +3,8 @@ package com.medHead.poc.services;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import com.medHead.poc.entity.Hopital;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,8 @@ public class PopulateHopitalService {
     private String apiUrl;                                                                                  // URL de l'API externe, configurée dans l'application.properties
 
     private static Logger logger = LoggerFactory.getLogger(PopulateHopitalService.class);
+    private static final Marker HTTP_MARKER = MarkerFactory.getMarker("http");
+    private static final Marker APP_MARKER = MarkerFactory.getMarker("app");
 
     /**
      * Cache local pour stocker les résultats des appels API en fonction de la clé unique.
@@ -60,7 +63,7 @@ public class PopulateHopitalService {
      * @throws IllegalArgumentException Si les entrées sont invalides.
      */
     public List<Hopital> getHospitalsByServiceId(int serviceId, double latitude, double longitude) {
-        logger.info("Requête pour serviceId={} avec latitude={}, longitude={}", serviceId, latitude, longitude);
+        logger.info(APP_MARKER, "Requête pour serviceId={} avec latitude={}, longitude={}", serviceId, latitude, longitude);
 
         // Validation des entrées
         validateInputs(serviceId, latitude, longitude);
@@ -70,28 +73,28 @@ public class PopulateHopitalService {
 
         // Vérification dans le cache
         if (hospitalCache.containsKey(cacheKey)) {
-            logger.info("Résultat trouvé dans le cache pour la clé : {}", cacheKey);
+            logger.info(APP_MARKER, "Résultat trouvé dans le cache pour la clé : {}", cacheKey);
             return hospitalCache.get(cacheKey);
         }
 
         // Construction de l'URL de la requête
         String requestUrl = String.format("%s/hospitals?serviceId=%d&lat=%.6f&lon=%.6f", apiUrl, serviceId, latitude, longitude);
-        logger.info("Appel à l'API externe avec URL : {}", requestUrl);
+        logger.info(HTTP_MARKER, "Appel à l'API externe avec URL : {}", requestUrl);
 
         // Simulation d'un appel à une API externe
         Hopital[] response;
         try {
             response = restTemplate.getForObject(requestUrl, Hopital[].class);
-            logger.info("Réponse reçue de l'API : {}", (Object) response);
+            logger.info(HTTP_MARKER, "Réponse reçue de l'API : {}", (Object) response);
         } catch (Exception e) {
-            logger.error("Erreur lors de l'appel à l'API : {}", e.getMessage());
+            logger.error(HTTP_MARKER, "Erreur lors de l'appel à l'API : {}", e.getMessage());
             // Gestion des erreurs de connexion ou de réponse
             throw new RuntimeException("Erreur lors de l'appel à l'API externe : " + e.getMessage(), e);
         }
 
         // Si aucune réponse n'est retournée, renvoyer une liste vide
         if (response == null) {
-            logger.warn("Aucune réponse de l'API externe.");
+            logger.warn(HTTP_MARKER, "Aucune réponse de l'API externe.");
             return List.of();
         }
 
@@ -104,7 +107,7 @@ public class PopulateHopitalService {
      */
     @PreDestroy
     public void cleanup() {
-        logger.info("Aucune ressource spécifique à nettoyer dans RestTemplate (SimpleClientHttpRequestFactory).");
+        logger.info(APP_MARKER, "Aucune ressource spécifique à nettoyer dans RestTemplate (SimpleClientHttpRequestFactory).");
     }
 
     /**
@@ -127,12 +130,15 @@ public class PopulateHopitalService {
      */
     private void validateInputs(int serviceId, double latitude, double longitude) {
         if (serviceId <= 0) {
+            logger.error(APP_MARKER, "L'ID du service doit être un entier positif. Entrée invalide: serviceId={}", serviceId);
             throw new IllegalArgumentException("L'ID du service doit être un entier positif.");
         }
         if (latitude < -90 || latitude > 90) {
+            logger.error(APP_MARKER, "La latitude doit être comprise entre -90 et 90. Entrée invalide: latitude={}", latitude);
             throw new IllegalArgumentException("La latitude doit être comprise entre -90 et 90.");
         }
         if (longitude < -180 || longitude > 180) {
+            logger.error(APP_MARKER, "La longitude doit être comprise entre -180 et 180. Entrée invalide: longitude={}", longitude);
             throw new IllegalArgumentException("La longitude doit être comprise entre -180 et 180.");
         }
     }
@@ -142,6 +148,6 @@ public class PopulateHopitalService {
      */
     public void clearCache() {
         hospitalCache.clear();
-        logger.info("Cache vidé.");
+        logger.info(APP_MARKER, "Cache vidé.");
     }
 }
