@@ -1,4 +1,10 @@
 package com.medHead.poc.model;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
+
 import java.util.UUID;
 
 /**
@@ -7,6 +13,9 @@ import java.util.UUID;
  * vers un service ou un établissement de soins.
  */
 public class Patient {
+    private static final Logger logger = LoggerFactory.getLogger(Patient.class);
+    private static final Marker APP_MARKER = MarkerFactory.getMarker("APP_FILE");
+
     private UUID id;                                                            // Identifiant unique du patient
     private int serviceId = 0;                                                  // ID du service requis pour la prise en charge (défaut : 0)
     private String specialite;                                                  // Spécialité ou type de soin requis par le patient
@@ -21,6 +30,7 @@ public class Patient {
      */
     public Patient() {
         this.id = UUID.randomUUID();
+        logger.info(APP_MARKER, "Création d'un nouveau patient avec ID généré : {}", id);
     }
 
     /**
@@ -40,6 +50,7 @@ public class Patient {
         setQualite(qualite);                                                    // Validation via setter
         setLatitude(latitude);                                                  // Validation via setter
         setLongitude(longitude);                                                // Validation via setter
+        logger.info(APP_MARKER, "Création du patient avec ID : {}", id);
     }
 
 
@@ -56,9 +67,11 @@ public class Patient {
      */
     public void setId(UUID id) {
         if (id == null) {
+            logger.error(APP_MARKER, "Tentative de définition d'un ID null pour le patient.");
             throw new IllegalArgumentException("L'ID doit être un entier positif non nul.");
         }
         this.id = id;
+        logger.info(APP_MARKER, "ID du patient défini : {}", id);
     }
 
 
@@ -75,9 +88,11 @@ public class Patient {
      */
     public void setServiceId(int serviceId) {
         if (serviceId <= 0) {
+            logger.error(APP_MARKER, "Tentative de définition d'un ID de service invalide : {}", serviceId);
             throw new IllegalArgumentException("L'ID du service doit être positif.");
         }
         this.serviceId = serviceId;
+        logger.info(APP_MARKER, "Service ID du patient défini : {}", serviceId);
     }
 
     public String getSpecialite() {
@@ -92,9 +107,11 @@ public class Patient {
      */
     public void setSpecialite(String specialite) {
         if (specialite == null || specialite.trim().isEmpty()) {
+            logger.error(APP_MARKER, "Tentative de définition d'une spécialité vide ou nulle.");
             throw new IllegalArgumentException("La spécialité ne peut pas être vide ou nulle.");
         }
         this.specialite = specialite;
+        logger.info(APP_MARKER, "Spécialité du patient définie : {}", specialite);
     }
 
     public String getResponsable() {
@@ -109,9 +126,11 @@ public class Patient {
      */
     public void setResponsable(String responsable) {
         if (responsable == null || responsable.trim().isEmpty()) {
+            logger.error(APP_MARKER, "Tentative de définition d'un responsable vide ou nul.");
             throw new IllegalArgumentException("Le nom du responsable ne peut pas être vide ou nul.");
         }
         this.responsable = responsable;
+        logger.info(APP_MARKER, "Responsable du patient défini : {}", responsable);
     }
 
     public String getQualite() {
@@ -126,9 +145,11 @@ public class Patient {
      */
     public void setQualite(String qualite) {
         if (qualite == null || qualite.trim().isEmpty()) {
+            logger.error(APP_MARKER, "Tentative de définition d'une qualité vide ou nulle.");
             throw new IllegalArgumentException("La qualité ne peut pas être vide ou nulle.");
         }
         this.qualite = qualite;
+        logger.info(APP_MARKER, "Qualité du responsable définie : {}", qualite);
     }
 
     public double getLatitude() {
@@ -144,9 +165,11 @@ public class Patient {
      */
     public void setLatitude(double latitude) {
         if (latitude < -90 || latitude > 90) {
+            logger.error(APP_MARKER, "Latitude invalide : {}", latitude);
             throw new IllegalArgumentException("La latitude doit être comprise entre -90 et 90.");
         }
         this.latitude = latitude;
+        logger.info(APP_MARKER, "Latitude du patient définie : {}", latitude);
     }
 
     public double getLongitude() {
@@ -162,9 +185,11 @@ public class Patient {
      */
     public void setLongitude(double longitude) {
         if (longitude < -180 || longitude > 180) {
+            logger.error(APP_MARKER, "Longitude invalide : {}", longitude);
             throw new IllegalArgumentException("La longitude doit être comprise entre -180 et 180.");
         }
         this.longitude = longitude;
+        logger.info(APP_MARKER, "Longitude du patient définie : {}", longitude);
     }
 
     /**

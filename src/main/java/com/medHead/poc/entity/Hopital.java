@@ -1,5 +1,10 @@
 package com.medHead.poc.entity;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +14,9 @@ import java.util.List;
  * Cette entité est utilisée pour modéliser un hôpital dans le système.
  */
 public class Hopital {
+    private static final Logger logger = LoggerFactory.getLogger(Hopital.class);
+    private static final Marker APP_MARKER = MarkerFactory.getMarker("APP_FILE");
+
     private Long id;                                // Identifiant unique de l'hôpital (auto-généré)
     private String nom;                             // Nom de l'hôpital
     private List<Integer> serviceIdsDisponibles;    // Liste des ID des services disponibles dans cet hôpital
@@ -31,6 +39,7 @@ public class Hopital {
      * @throws IllegalArgumentException Si un paramètre est invalide
      */
     public Hopital(String nom, List<Integer> serviceIdsDisponibles, double latitude, double longitude, int nombreLitDisponible) {
+        logger.info(APP_MARKER, "Création d'un hôpital avec nom : {}", nom);
         setNom(nom);
         setServiceIdsDisponibles(serviceIdsDisponibles);
         setLatitude(latitude);
@@ -51,9 +60,11 @@ public class Hopital {
      */
     public void setId(Long id) {
         if (id != null && id <= 0) {
+            logger.error(APP_MARKER, "Tentative de définition d'un ID invalide : {}", id);
             throw new IllegalArgumentException("L'ID doit être supérieur à 0.");
         }
         this.id = id;
+        logger.info(APP_MARKER, "ID de l'hôpital défini : {}", id);
     }
 
     public String getNom() {
@@ -67,9 +78,11 @@ public class Hopital {
      */
     public void setNom(String nom) {
         if (nom == null || nom.trim().isEmpty()) {
+            logger.info(APP_MARKER, "ID de l'hôpital défini éxistant : {}", id);
             throw new IllegalArgumentException("Le nom de l'hôpital ne peut pas être null ou vide.");
         }
         this.nom = nom;
+        logger.info(APP_MARKER, "Nom de l'hôpital défini : {}", nom);
     }
 
     public List<Integer> getServiceIdsDisponibles() {
@@ -83,9 +96,11 @@ public class Hopital {
      */
     public void setServiceIdsDisponibles(List<Integer> serviceIdsDisponibles) {
         if (serviceIdsDisponibles == null || serviceIdsDisponibles.isEmpty()) {
+            logger.error(APP_MARKER, "Tentative de définition d'une liste de services vide ou null.");
             throw new IllegalArgumentException("La liste des services disponibles ne peut pas être null ou vide.");
         }
         this.serviceIdsDisponibles = new ArrayList<>(serviceIdsDisponibles);
+        logger.info(APP_MARKER, "Services disponibles définis : {}", serviceIdsDisponibles);
     }
 
     public double getLatitude() {
@@ -99,9 +114,11 @@ public class Hopital {
      */
     public void setLatitude(double latitude) {
         if (latitude < -90 || latitude > 90) {
+            logger.error(APP_MARKER, "Latitude invalide : {}", latitude);
             throw new IllegalArgumentException("La latitude doit être comprise entre -90 et 90.");
         }
         this.latitude = latitude;
+        logger.info(APP_MARKER, "Latitude de l'hôpital définie : {}", latitude);
     }
 
     public double getLongitude() {
@@ -115,9 +132,11 @@ public class Hopital {
      */
     public void setLongitude(double longitude) {
         if (longitude < -180 || longitude > 180) {
+            logger.error(APP_MARKER, "Longitude invalide : {}", longitude);
             throw new IllegalArgumentException("La longitude doit être comprise entre -180 et 180.");
         }
         this.longitude = longitude;
+        logger.info(APP_MARKER, "Longitude de l'hôpital définie : {}", longitude);
     }
 
     public int getNombreLitDisponible() {
@@ -131,9 +150,11 @@ public class Hopital {
      */
     public void setNombreLitDisponible(int nombreLitDisponible) {
         if (nombreLitDisponible < 0) {
+            logger.error(APP_MARKER, "Nombre de lits invalide : {}", nombreLitDisponible);
             throw new IllegalArgumentException("Le nombre de lits disponibles ne peut pas être négatif.");
         }
         this.nombreLitDisponible = nombreLitDisponible;
+        logger.error(APP_MARKER, "Nombre de lits invalide : {}", nombreLitDisponible);
     }
 
     public int getDelai() {
@@ -147,9 +168,11 @@ public class Hopital {
      */
     public void setDelai(int delai) {
         if (delai < 0) {
+            logger.error(APP_MARKER, "Délai invalide : {}", delai);
             throw new IllegalArgumentException("Le délai ne peut pas être négatif.");
         }
         this.delai = delai;
+        logger.info(APP_MARKER, "Délai de l'hôpital défini : {}", delai);
     }
 
     @Override

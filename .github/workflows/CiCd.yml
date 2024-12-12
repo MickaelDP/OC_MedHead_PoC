@@ -1,10 +1,16 @@
-name: CI/CD Pipeline
+name: On demand CI/CD Pipeline
 
+# Utilisation sur githubaction à la demande
 on:
-  push:
-    branches:
-      - main
-      - dev
+  workflow_dispatch:
+    inputs:
+      encironement:
+        description: ''
+        required: true
+        default: 'dev'
+        options:
+          - main
+          - test
 
 jobs:
   build:
@@ -25,14 +31,21 @@ jobs:
           npm install
           npm run build
 
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '22'
 
-      - name: Build and Test Backend
-        run: mvn clean install
+      - name: Run Backend Tests
+        run: mvn clean test  # Exécution des tests Java
 
       - name: Generate JaCoCo Test Coverage Report
-        run: mvn verify
+        run: mvn verify  # Génération du rapport de couverture des tests

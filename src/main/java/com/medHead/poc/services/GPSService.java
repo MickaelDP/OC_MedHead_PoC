@@ -1,5 +1,9 @@
 package com.medHead.poc.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
@@ -10,6 +14,10 @@ import java.util.Random;
  */
 @Service
 public class GPSService {
+
+    private static final Logger logger = LoggerFactory.getLogger(GPSService.class);
+    private static final Marker HTTP_MARKER = MarkerFactory.getMarker("HTTP_FILE");
+
 
     /**
      * Délai minimum simulé (en minutes).
@@ -37,7 +45,15 @@ public class GPSService {
      */
 
     public int getTravelDelay(double patientLatitude, double patientLongitude, double hospitalLatitude, double hospitalLongitude) {
-        // Simule un délai aléatoire
-        return MIN_DELAY + random.nextInt(MAX_DELAY - MIN_DELAY + 1);
+        // Log de la demande, masquage des coordonnées pour respecter la RGPD
+        logger.info(HTTP_MARKER, "Demande de délai de trajet entre patient et hôpital. Paramètres: patientLatitude=<masqué>, patientLongitude=<masqué>, hospitalLatitude=<masqué>, hospitalLongitude=<masqué>");
+
+
+        int delay = MIN_DELAY + random.nextInt(MAX_DELAY - MIN_DELAY + 1);
+
+        // Log du délai calculé avec le marqueur HTTP_FILE
+        logger.info(HTTP_MARKER, "Délai de trajet calculé: {} minutes.", delay);
+
+        return delay;
     }
 }

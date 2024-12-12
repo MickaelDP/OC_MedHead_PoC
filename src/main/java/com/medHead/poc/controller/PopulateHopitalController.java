@@ -5,6 +5,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 /**
  * Contrôleur REST pour gérer les requêtes concernant les hôpitaux.
@@ -16,6 +20,8 @@ public class PopulateHopitalController {
     // Cache local avec thread safety
     private final ConcurrentHashMap<String, List<Hopital>> hospitalCache = new ConcurrentHashMap<>();
 
+    private static final Logger logger = LoggerFactory.getLogger(PopulateHopitalController.class);
+    private static final Marker HTTP_MARKER = MarkerFactory.getMarker("HTTP_FILE");
 
     /**
      * Endpoint pour récupérer une liste d'hôpitaux offrant un service spécifique, basés sur une localisation.
@@ -32,10 +38,14 @@ public class PopulateHopitalController {
             @RequestParam double lat,
             @RequestParam double lon
     ) {
+        // Log de la requête HTTP, masquage des coordonnées pour respecter la RGPD
+        logger.info(HTTP_MARKER, "Requête reçue pour récupérer les hôpitaux avec serviceId: {} et localisation: lat = <masqué>, lon = <masqué>", serviceId);
+
         String cacheKey = serviceId + "-" + lat + "-" + lon;
 
         // Vérifie si la réponse est en cache
         if (hospitalCache.containsKey(cacheKey)) {
+            logger.info(HTTP_MARKER, "Réponse trouvée dans le cache pour la clé: {}", cacheKey);
             return hospitalCache.get(cacheKey);
         }
 
@@ -55,11 +65,13 @@ public class PopulateHopitalController {
 
         // Ajoute la réponse dans le cache
         hospitalCache.put(cacheKey, hospitals);
+        logger.info(HTTP_MARKER, "Réponse ajoutée au cache pour la clé: {}", cacheKey);
         return hospitals;
     }
 
     @DeleteMapping("/cache/clear")
     public void clearCache() {
+        logger.info(HTTP_MARKER, "Vider le cache des hôpitaux.");
         hospitalCache.clear();
     }
 }

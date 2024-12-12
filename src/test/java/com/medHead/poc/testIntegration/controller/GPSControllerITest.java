@@ -1,6 +1,7 @@
 package com.medHead.poc.testIntegration.controller;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +26,9 @@ public class GPSControllerITest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Value("${jwt.fixed-token}")                                                        // Injection du token depuis application.properties
+    private String fixedToken;
+
     /**
      * Teste l'endpoint /api/gps/delay avec des coordonnées valides.
      * Vérifie que le délai simulé retourné est bien dans la plage attendue (5 à 30 minutes).
@@ -35,15 +39,16 @@ public class GPSControllerITest {
     void testGetTravelDelay() throws Exception {
         // Appel au contrôleur avec des paramètres valides
         mockMvc.perform(get("/api/gps/delay")
+                        .header("Authorization", "Bearer " + fixedToken)
                         .param("patientLat", "48.8566")
                         .param("patientLon", "2.3522")
                         .param("hospitalLat", "48.8600")
                         .param("hospitalLon", "2.3260"))
-                .andExpect(status().isOk())                                                           // Vérifie que le statut HTTP est 200
-                .andExpect(jsonPath("$").isNumber())                                        // Vérifie que la réponse est un nombre
-                .andExpect(jsonPath("$", greaterThanOrEqualTo(5)))                    // Vérifie que la réponse est >= 5
-                .andExpect(jsonPath("$", lessThanOrEqualTo(30)));                     // Vérifie que la réponse est <= 30
- }
+                .andExpect(status().isOk())                                             // Vérifie que le statut HTTP est 200
+                .andExpect(jsonPath("$").isNumber())                          // Vérifie que la réponse est un nombre
+                .andExpect(jsonPath("$", greaterThanOrEqualTo(5)))      // Vérifie que la réponse est >= 5
+                .andExpect(jsonPath("$", lessThanOrEqualTo(30)));       // Vérifie que la réponse est <= 30
+    }
 
     /**
      * Teste l'endpoint /api/gps/delay pour des coordonnées valides.
@@ -53,7 +58,9 @@ public class GPSControllerITest {
      */
     @Test
     void testValidCoordinates() throws Exception {
+
         mockMvc.perform(get("/api/gps/delay")
+                        .header("Authorization", "Bearer " + fixedToken) // Ajoute le token au header
                         .param("patientLat", "48.8566")
                         .param("patientLon", "2.3522")
                         .param("hospitalLat", "48.8600")
@@ -71,8 +78,10 @@ public class GPSControllerITest {
      */
     @Test
     void testInvalidCoordinates() throws Exception {
+
         // Test avec des coordonnées invalides
         mockMvc.perform(get("/api/gps/delay")
+                        .header("Authorization", "Bearer " + fixedToken) // Ajoute le token au header
                         .param("patientLat", "100.0") // Latitude invalide
                         .param("patientLon", "2.3522")
                         .param("hospitalLat", "48.8600")

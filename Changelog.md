@@ -1,5 +1,65 @@
 # Changelog
 
+## [v1.0.3] - Ajout de la gestion des logs et amélioration de la traçabilité
+
+Cette version introduit une gestion avancée des logs pour améliorer la traçabilité des actions effectuées dans l'application, avec une distinction claire entre les logs d'applications et les logs HTTP. Elle permet de mieux suivre les événements internes et externes tout en respectant les bonnes pratiques en matière de RGPD.
+
+### **Nouveautés**
+
+#### **Gestion des Logs**
+- **Logs d'application** :
+  - Mise en place d’un fichier de log spécifique pour l’historique applicatif : `/logs/ledHead.log`.
+  - Ajout des logs relatifs aux calculs internes, aux erreurs internes, ainsi qu’aux événements importants du processus métier.
+  - Amélioration de la lisibilité et de l’archivage des événements liés au fonctionnement interne de l’application.
+
+- **Logs de communication HTTP** :
+  - Mise en place d’un fichier de log spécifique pour les communications HTTP : `/logs/http_logs.log`.
+  - Séparation claire des logs internes et des échanges HTTP pour améliorer la sécurité et la traçabilité des interactions avec des services externes.
+  - Enregistrement des requêtes et réponses HTTP, avec une attention particulière à la confidentialité des données sensibles.
+
+- **Filtrage des logs** :
+  - Configuration de `logback` afin de filtrer les logs selon leur type, permettant de conserver un historique détaillé tout en limitant l'impact des logs sur la performance du système.
+
+- **Sécurité des logs** :
+  - Application de mesures de sécurité pour assurer que les logs respectent les bonnes pratiques RGPD, notamment l’anonymisation ou l’omission de données sensibles dans les logs HTTP.
+
+## [v1.0.2] - Implémentation du multithreading et améliorations diverses
+
+Cette version introduit des améliorations majeures en termes de performance grâce à l'implémentation du multithreading pour le calcul des délais de trajets, permettant ainsi d'optimiser les performances lors des requêtes externes, telles que celles envoyées au service GPS. De plus, diverses optimisations ont été apportées pour améliorer la stabilité et l'efficacité du processus global.
+
+### **Nouveautés**
+
+#### **Implémentation du Multithreading**
+- **Optimisation des calculs de délais** :
+  - Introduction d’un **thread pool** pour exécuter de manière parallèle le calcul des délais entre le patient et les hôpitaux.
+  - Chaque tâche est soumise à un **ExecutorService** pour effectuer les calculs de distance de manière asynchrone, réduisant le temps de traitement global des demandes.
+  - Utilisation de **Future<Void>** pour gérer le retour des tâches et garantir que toutes les tâches sont complètes avant de finaliser le processus.
+  - Ajout d'un mécanisme pour attendre la fin de toutes les tâches avant de libérer le thread pool et de terminer le parcours.
+
+#### **Optimisation des Performances**
+- **Amélioration de la gestion des threads** :
+  - Utilisation d'un **FixedThreadPool** avec un nombre fixe de threads pour exécuter simultanément les tâches et éviter la surcharge du système.
+  - Le pool de threads est désormais correctement géré avec une fermeture explicite après l'exécution de toutes les tâches, garantissant ainsi une utilisation optimale des ressources système.
+
+## [v1.0.1] - Correction et amélioration de l'intégration CI/CD et des tokens JWT et CSRF
+
+Cette version apporte des ajustements importants à l'intégration des tokens JWT et CSRF ainsi qu'à l'amélioration de l'utilisation du pipeline CI/CD pour l'application de réservation de lits hospitaliers. Elle vise à renforcer la sécurité des échanges via des tokens et à mieux séparer les étapes de build et de test dans le processus d'intégration continue.
+
+### **Nouveautés**
+
+#### **Sécurisation avec JWT et CSRF**
+- **Gestion des tokens JWT et CSRF** :
+  - Intégration des tokens JWT et CSRF pour sécuriser les échanges entre le frontend et le backend.
+  - Mise en place d'un filtre d'authentification JWT et de gestion des tokens CSRF dans le backend Spring Boot.
+  - Ajout d'un contrôleur pour la récupération des tokens CSRF (`/test/csrf`).
+
+#### **CI/CD avec GitHub Actions**
+- **Optimisation du pipeline CI/CD** :
+  - Séparation des étapes de build et de tests dans le pipeline.
+  - Les tests ne sont plus exécutés à chaque push, mais peuvent être lancés manuellement via l'interface GitHub avec `workflow_dispatch`.
+  - Le build et le test du backend sont désormais distincts et gérés de manière plus précise.
+  - Introduction de la validation manuelle des tests via GitHub Actions, permettant de mieux contrôler les actions à effectuer.
+
 ## [v1.0.0] - Proof of Concept (PoC) Opérationnel
 
 Cette version marque la finalisation et l'opérationnalité complète du PoC pour l'application de réservation de lits hospitaliers. Elle inclut toutes les fonctionnalités principales, un frontend Angular entièrement fonctionnel, un backend Spring Boot robuste, ainsi qu'une intégration complète de la CI/CD pour assurer le suivi des tests et des déploiements.
